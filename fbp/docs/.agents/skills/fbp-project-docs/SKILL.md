@@ -40,6 +40,8 @@ Do not create broad architecture or operations documents unless the user explici
 
 ## During and after work
 
+When adding or changing shared FBP features, tools, Skills, or support restrictions, check [FBP対応範囲リスト](../fbp-capabilities.md) before completion and update affected entries with verified conditions and evidence. App-specific features belong in the app docs, not in the shared standard capabilities. If a worker cannot safely edit shared guidance, follow the list's pending-update record and internal handoff procedure; do not claim the list was updated.
+
 Update docs when the work changes future behavior or support judgment:
 
 - Add customer-specific response preferences only as practical support notes.
