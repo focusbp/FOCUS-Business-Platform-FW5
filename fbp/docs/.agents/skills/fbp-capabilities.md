@@ -32,6 +32,7 @@
 | 新規画像処理スクリプトの作成・改修 | 開発者対応 | 既存ツールの引数・マスク・設定JSON指定は開発に含めない | local-auto-task |
 | 公開ページ・公開フォーム・埋込み | 追加開発 | 本人性・閲覧権限・URL設計を確認。管理画面の認証迂回を作らない | fbp-public-pages、fbp-embed_app |
 | メール送信・確認コード | 標準対応／追加開発 | テンプレート・宛先・送信許可・検証条件に従う | fbp-send_email、fbp-email-confirm-dialog |
+| ローカル作業から「私宛にメール」 | 条件付き | ユーザーの明示的な送信依頼で、important@soshiki-kaikaku.comへ送信。AIが会話に応じて件名・本文を作成し、既存sendmail.shを使用。アプリのメール送信機能とは別 | local-mail-me（Skill検証済み、送信経路は既存実装） |
 | POP／IMAP受信処理 | 条件付き | 受信実行とサーバー側削除の許可を分ける | fbp-receive-mail |
 | 定期処理・webhook・LINE連携 | 標準対応／追加開発 | 登録設定・本人との紐付け・外部送信許可が必要 | fbp-cron、fbp-webhook |
 | 公式外部API連携・API認証・MCP | 条件付き | 提供元の公式API・設定・認証・権限を確認 | fbp-api-auth、fbp-mcp-server |

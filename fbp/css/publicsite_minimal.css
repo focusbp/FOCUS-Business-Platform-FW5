@@ -770,6 +770,40 @@ button.fbp-original-select-button:hover,
 	box-sizing: border-box;
 }
 
+.fbp-original-select-toolbar input[type="text"] {
+	min-height: 42px;
+	margin: 0;
+	padding: 8px 10px;
+	border: 1px solid var(--public-form-line, #cbd5e1);
+	border-radius: 6px;
+	background: var(--public-form-surface, #fff);
+	color: var(--public-form-ink, #0f172a);
+	font: inherit;
+	font-size: 16px;
+	line-height: 1.4;
+}
+
+.fbp-original-select-toolbar button {
+	box-sizing: border-box;
+	margin: 0;
+	border: 1px solid var(--public-form-line, #cbd5e1);
+	border-radius: 6px;
+	color: var(--public-form-ink, #0f172a);
+	font: inherit;
+	font-size: 16px;
+	cursor: pointer;
+}
+
+.fbp-original-select-toolbar button:hover {
+	background: #e2e8f0;
+}
+
+.fbp-original-select-toolbar input[type="text"]:focus,
+.fbp-original-select-toolbar button:focus-visible {
+	outline: 2px solid var(--public-form-focus-ring, rgba(25, 116, 210, 0.18));
+	border-color: var(--public-form-focus, #1974D2);
+}
+
 .fbp-original-select-sort-controls {
 	display: inline-flex;
 	align-items: center;
