@@ -69,6 +69,25 @@ codex
 
 ## Make Samples
 
+### Simple Electronic Contract (Admin)
+
+```text
+Use fbp-app-samples to create the simple-electronic-contract sample.
+Inspect the management-screen implementation in app-fwtest as the reference pattern.
+Read simple-electronic-contract.md and simple-electronic-contract-db.md.
+Keep the Standard Screen list, recipient name/email -> one PDF -> final confirmation
+wizard, current user.name/email as sender, two independent email approvals,
+10-day invitation and 3-day public ZIP download, management ZIP access and retries.
+Remove agency/head-office selection and customer-specific permissions or integrations.
+Maintain the assets, manifest with DB/mail definitions, installer, isolated tests,
+references, SKILL.md entry, capability list and this Make Samples prompt together.
+Do not depend on a live app or insert real data, credentials or SMTP settings.
+Verify lint, JSON, fresh install and overwrite refusal, management wizard,
+two-party approval, ZIP/PDF content, ownership/CSRF/expiry and concurrent approval
+with mock email, without sending real messages.
+```
+
+
 ### Standard Form Base
 
 ```text

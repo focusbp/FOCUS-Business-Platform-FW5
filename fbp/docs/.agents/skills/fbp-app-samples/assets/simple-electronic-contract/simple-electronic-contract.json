@@ -1,0 +1,238 @@
+{
+  "version": 1,
+  "sample": "simple-electronic-contract",
+  "files": [
+    "classes/app/sample_esign/Guard.php",
+    "classes/app/sample_esign/Service.php",
+    "classes/app/sample_esign/Templates/detail.tpl",
+    "classes/app/sample_esign/Templates/standard_form_style.tpl",
+    "classes/app/sample_esign/Templates/wizard.tpl",
+    "classes/app/sample_esign/sample_esign.php",
+    "classes/app/sample_esign_contracts_visibility_filter/sample_esign_contracts_visibility_filter.php",
+    "classes/app/sample_esign_public/Templates/error.tpl",
+    "classes/app/sample_esign_public/Templates/head.tpl",
+    "classes/app/sample_esign_public/Templates/page.tpl",
+    "classes/app/sample_esign_public/sample_esign_public.php"
+  ],
+  "options": {
+    "sample_esign_status": [
+      {
+        "key": "0",
+        "value": "双方の承認待ち",
+        "color": "#b77900"
+      },
+      {
+        "key": "1",
+        "value": "一方が承認済み",
+        "color": "#6850a1"
+      },
+      {
+        "key": "2",
+        "value": "完了ファイル作成待ち",
+        "color": "#3269ab"
+      },
+      {
+        "key": "3",
+        "value": "締結完了",
+        "color": "#26834a"
+      },
+      {
+        "key": "4",
+        "value": "期限切れ",
+        "color": "#b03434"
+      }
+    ]
+  },
+  "notes": [
+    {
+      "table": {
+        "tb_name": "sample_esign_contracts",
+        "menu_name": "簡易電子契約",
+        "description": "管理者用の2名承認型PDF契約サンプル",
+        "show_menu": 1,
+        "menu_visibility": 1,
+        "screen_build_type": 0,
+        "list_type": 0,
+        "list_width": 1000,
+        "edit_width": 680,
+        "sortkey": "id",
+        "sort_order": 3,
+        "show_duplicate": 0
+      },
+      "fields": [
+        {
+          "parameter_name": "owner_user_id",
+          "parameter_title": "作成ユーザー",
+          "type": "number",
+          "length": 24
+        },
+        {
+          "parameter_name": "title",
+          "parameter_title": "契約名",
+          "type": "text",
+          "length": 600
+        },
+        {
+          "parameter_name": "sender_name",
+          "parameter_title": "自分の氏名",
+          "type": "text",
+          "length": 600
+        },
+        {
+          "parameter_name": "sender_email",
+          "parameter_title": "自分のメールアドレス",
+          "type": "text",
+          "length": 762
+        },
+        {
+          "parameter_name": "recipient_name",
+          "parameter_title": "相手の氏名",
+          "type": "text",
+          "length": 600
+        },
+        {
+          "parameter_name": "recipient_email",
+          "parameter_title": "相手のメールアドレス",
+          "type": "text",
+          "length": 762
+        },
+        {
+          "parameter_name": "status",
+          "parameter_title": "内部状態",
+          "type": "text",
+          "length": 24
+        },
+        {
+          "parameter_name": "status_code",
+          "parameter_title": "状態",
+          "type": "dropdown",
+          "length": 24,
+          "constant_array_name": "sample_esign_status"
+        },
+        {
+          "parameter_name": "created_at",
+          "parameter_title": "登録日時",
+          "type": "datetime",
+          "length": 24
+        },
+        {
+          "parameter_name": "updated_at",
+          "parameter_title": "更新日時",
+          "type": "datetime",
+          "length": 24
+        },
+        {
+          "parameter_name": "expires_at",
+          "parameter_title": "承認期限",
+          "type": "datetime",
+          "length": 24
+        },
+        {
+          "parameter_name": "completed_at",
+          "parameter_title": "締結日時",
+          "type": "datetime",
+          "length": 24
+        },
+        {
+          "parameter_name": "download_expires_at",
+          "parameter_title": "公開取得期限",
+          "type": "datetime",
+          "length": 24
+        },
+        {
+          "parameter_name": "request_key",
+          "parameter_title": "重複防止キー",
+          "type": "text",
+          "length": 64
+        },
+        {
+          "parameter_name": "original_pdf",
+          "parameter_title": "原本保存名",
+          "type": "text",
+          "length": 100
+        },
+        {
+          "parameter_name": "original_hash",
+          "parameter_title": "原本SHA256",
+          "type": "text",
+          "length": 64
+        },
+        {
+          "parameter_name": "signed_pdf",
+          "parameter_title": "完成PDF保存名",
+          "type": "text",
+          "length": 100
+        },
+        {
+          "parameter_name": "evidence_zip",
+          "parameter_title": "証跡ZIP保存名",
+          "type": "text",
+          "length": 100
+        },
+        {
+          "parameter_name": "state_json",
+          "parameter_title": "承認・認証・送信履歴",
+          "type": "textarea",
+          "length": 90000
+        }
+      ],
+      "screens": {
+        "list": [
+          "title",
+          "sender_name",
+          "recipient_name",
+          "recipient_email",
+          "status_code",
+          "created_at",
+          "expires_at",
+          "completed_at"
+        ],
+        "search": [
+          "title",
+          "recipient_name",
+          "status_code"
+        ]
+      },
+      "buttons": [
+        {
+          "button_title": "新規追加",
+          "class_name": "sample_esign",
+          "function_name": "run",
+          "place": 0,
+          "user_request": "氏名・メールから簡易電子契約を追加する"
+        },
+        {
+          "button_title": "詳細",
+          "class_name": "sample_esign",
+          "function_name": "detail",
+          "place": 1,
+          "user_request": "承認状況とメール送信状況、再試行、証跡ZIPの取得"
+        }
+      ]
+    }
+  ],
+  "emails": [
+    {
+      "key": "sample_esign_invite",
+      "template_name": "簡易電子契約：承認依頼",
+      "subject": "契約内容をご確認ください：{$aes_title nofilter}",
+      "body": "{$aes_name nofilter} 様\n\n契約「{$aes_title nofilter}」の内容をご確認ください。\n次のURLからPDFの確認、メール認証、承認を行ってください。\n{$aes_url nofilter}\n有効期限：{$aes_expires nofilter}\n\n作成者・相手の両方が承認すると締結が完了します。\n"
+    },
+    {
+      "key": "sample_esign_code",
+      "template_name": "簡易電子契約：確認コード",
+      "subject": "簡易電子契約の確認コード",
+      "body": "契約：{$aes_title nofilter}\n確認コード：{$aes_code nofilter}\n有効期限は10分です。\n心当たりがなければ操作せず、このメールを破棄してください。\n"
+    },
+    {
+      "key": "sample_esign_complete",
+      "template_name": "簡易電子契約：締結完了",
+      "subject": "締結が完了しました：{$aes_title nofilter}",
+      "body": "{$aes_name nofilter} 様\n\n契約「{$aes_title nofilter}」は2名の承認が揃い、締結が完了しました。\n次のURLから証跡ZIP（完成PDF入り）を取得してください。\n{$aes_url nofilter}\n有効期限：{$aes_expires nofilter}\n"
+    }
+  ],
+  "test_files": [
+    "tests/bootstrap.php",
+    "tests/domain.php"
+  ]
+}

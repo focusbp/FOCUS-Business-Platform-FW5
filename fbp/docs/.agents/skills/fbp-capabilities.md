@@ -31,6 +31,7 @@
 | 静止画像の生成・編集・合成 | 条件付き | auto-taskの制作ツールとアプリのAPI実装を区別。既存ツールで作れる画像は進める | imagegen、local-image-compose、local-image-effects、local-auto-task |
 | 新規画像処理スクリプトの作成・改修 | 開発者対応 | 既存ツールの引数・マスク・設定JSON指定は開発に含めない | local-auto-task |
 | 公開ページ・公開フォーム・埋込み | 追加開発 | 本人性・閲覧権限・URL設計を確認。管理画面の認証迂回を作らない | fbp-public-pages、fbp-embed_app |
+| 簡易電子契約（2名のPDF承認） | 追加開発／検証済みサンプル | 管理画面の標準一覧・user由来の自分情報・相手の氏名/メール・PDF1件・最終確認で登録・双方メール認証と承認・証跡ZIP。承認URL10日、公開取得3日、管理側取得。SMTPは導入先設定、検証は模擬メール | fbp-app-samples/simple-electronic-contract、fbp-standard-screen、fbp-dialog、fbp-public-pages |
 | メール送信・確認コード | 標準対応／追加開発 | テンプレート・宛先・送信許可・検証条件に従う | fbp-send_email、fbp-email-confirm-dialog |
 | ローカル作業から「私宛にメール」 | 条件付き | ユーザーの明示的な送信依頼で、important@soshiki-kaikaku.comへ送信。AIが会話に応じて件名・本文を作成し、既存sendmail.shを使用。アプリのメール送信機能とは別 | local-mail-me（Skill検証済み、送信経路は既存実装） |
 | POP／IMAP受信処理 | 条件付き | 受信実行とサーバー側削除の許可を分ける | fbp-receive-mail |

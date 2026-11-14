@@ -182,3 +182,7 @@ description: Build, maintain, or adjust FBP Standard Screen note management usin
 ## 管理者限定の構成操作
 
 本番のノート追加＋は廃止。Developer Modeの新規作成＋と機能追加依頼＋は管理者または開発権限、Developer Modeのデータベース形式への変換は管理者限定。本番の構成変更はサポートタスクへ送る。ボタンの表示だけでなく受付・各ステップ・実行でも拒否する。通常の行追加や既存データ編集の権限とは別に扱う。
+
+## 簡易電子契約の再利用
+
+管理画面からPDFを送り、双方がメール認証・承認する機能を作る場合は、[簡易電子契約サンプル](../fbp-app-samples/references/simple-electronic-contract.md)を参照する。標準一覧・user情報・管理ダイアログと公開署名画面を一式で適応し、代理店等の固有区分は標準サンプルへ持ち込まない。

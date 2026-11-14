@@ -367,3 +367,7 @@ private function assign_news_list(Controller $ctl) {
 - `続けて入力する` のような戻りリンクでは、復号用の識別子を URL に毎回載せ直さず session 保持へ寄せると壊れにくい。
 - 一覧→詳細→一覧、検索、絞り込み、ページングなどの内部導線は、URLパラメータの引き回しより session 保持を優先する。
 - 公開フォームの基本例は `references/orders_contact_sample.md` を参照する。
+
+## 簡易電子契約の再利用
+
+管理画面からPDFを送り、双方がメール認証・承認する機能を作る場合は、[簡易電子契約サンプル](../fbp-app-samples/references/simple-electronic-contract.md)を参照する。標準一覧・user情報・管理ダイアログと公開署名画面を一式で適応し、代理店等の固有区分は標準サンプルへ持ち込まない。
