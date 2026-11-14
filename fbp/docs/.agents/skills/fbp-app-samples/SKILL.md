@@ -16,6 +16,8 @@ When creating a new reusable sample from an existing app or feature, read `refer
 
 ## Samples
 
+- **標準フォーム基本形**: 親フォーム・標準入力・項目別/全体エラー・右寄せ保存を一組で再利用。[使い方と検証](references/standard-form.md)、`assets/standard-form/`。`scripts/install_standard_form.php`で既存クラスへテンプレートだけ配置する。公開側・Original Screen・ダイアログで利用し、認証・CSRF検証・保存は各アプリで接続する。
+
 - **多対多突合＋通帳CSV** (`many-to-many-reconciliation`): 金額不一致でも双方から複数追加・個別解除し、連結した全体の合計・差額を両側一覧へ表示。通帳CSVのプレビュー・重複防止・出金対象外化を含む。[フロー](references/many-to-many-reconciliation.md)・[DB](references/many-to-many-reconciliation-db.md)、`assets/many-to-many-reconciliation/`。`scripts/install_many_to_many_reconciliation.php`でコードとテスト定義を別々に配置。業務データは自動投入しない。
 
 - **Incoming Mail** (`incoming-mail`): アプリ独自のPOP／IMAPアカウント、受信メールのノート保存、重複防止と処理済み確定、手動／cron入口。[フロー](references/incoming-mail.md)・[DB](references/incoming-mail-db.md)、`assets/incoming-mail/`、`scripts/install_incoming_mail.php`。認証情報・実データ・cronは自動登録しない。

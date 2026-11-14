@@ -69,6 +69,12 @@ codex
 
 ## Make Samples
 
+### Standard Form Base
+
+```text
+Create a reusable standard-form FBP template from the framework public-form/public-field and fields_form_original/direct patterns. Keep the parent form, scoped layout, empty/visible field and form errors, CSRF placeholder, and bottom-right save action together. Do not include customer data, live endpoints, authentication bypasses or a business DB. Maintain assets/standard-form, its manifest, installer, references/standard-form.md and the public-pages, original-screen and dialog Skill links. Verify installation and overwrite refusal, real FBP template rendering, retained values with multiple errors, hidden empty errors, right-aligned action and narrow-screen layout.
+```
+
 ### Many-to-many reconciliation and bank statement CSV
 
 ```text

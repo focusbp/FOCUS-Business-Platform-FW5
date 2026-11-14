@@ -11,6 +11,8 @@ description: Build and operate public_pages with login-free entry points, secure
 - LINE・Webhook・メール等から公開URLを発行する
 
 ## workflow
+公開側の新規フォームは[標準フォーム基本形](../fbp-app-samples/references/standard-form.md)を出発点にする。部品だけでなく`public-form`・`public-field`・空エラー非表示・操作行まで一組で適用する。既存フォームは親構造も確認し、標準部品の使用だけで余白が揃うと判断しない。
+
 1. `__construct` で `set_check_login(false)` を設定し、公開入口関数を決める。
 2. 入口関数で公開パラメータ（例: `id`）を受け、`decrypt` して session に公開ユーザー文脈をセットする。
 3. 公開ページ全体表示は `show_public_pages()` を優先する。新規の公開アプリ型UIでは必ず `show_public_pages("<contents.tpl>", "<head.tpl>", null, null, ["css_mode" => "minimal"])` を使い、管理画面向け `appstyle.css` を読み込まない。既存互換が必要な公開ページだけ、従来どおり `show_public_pages("<contents.tpl>", "<head.tpl>", "<contents_header.tpl>", "<contents_footer.tpl>")` を使う。不要な差し込みは `null` で省略してよい。操作系は `show_multi_dialog()` + `ajax-link` + `invoke-function` で遷移を組む。

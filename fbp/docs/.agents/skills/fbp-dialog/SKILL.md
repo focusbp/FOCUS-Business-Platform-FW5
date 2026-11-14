@@ -11,6 +11,8 @@ description: Implement FBP dialog-based UI flows with ajax-link/invoke-function,
 - エラー表示が絡むフォームを作る
 
 ## workflow
+フォーム本文は[標準フォーム基本形](../fbp-app-samples/references/standard-form.md)から適応する。`show_multi_dialog()`の既存認証と遷移を維持し、formの二重囲みを避ける。親class・空エラーの非表示・保存操作の配置も確認する。
+
 編集・保存ダイアログの実装例が必要なら、環境に `fbp_example.sh` がある場合は `fbp_example.sh dialog-save` を横断検索より先に使う（コマンドの配置は環境ルール参照）。ない環境では [編集クラスとテンプレートの例](../fbp-standard-screen/references/db-additionals-edit-delete-sample.md) の該当節を読む。既存画面固有の接続はその画面だけを追加確認し、取得済みの例を全文で読み直さない。取得ツールの省略は `--offset` で補い、以下の必須ルールも適用する。
 
 1. ダイアログ表示は `show_multi_dialog()` で開始。

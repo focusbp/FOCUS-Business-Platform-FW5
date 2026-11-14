@@ -15,6 +15,8 @@ description: Build custom note management screens when requested or Standard Scr
 - Original Screenサイドパネルの詳細設計は `fbp-side-panel` も使う
 
 ## workflow
+独自の追加・編集フォームは[標準フォーム基本形](../fbp-app-samples/references/standard-form.md)を参照し、親フォーム・エラー表示・操作行まで揃える。既存Standard Screenの自動フォームを置き換えたり、管理画面の認証を公開側へ切り替えたりしない。管理画面への適用では同梱のスコープ付き配置CSSを使い、公開側CSS全体を追加しない。
+
 既存の独自画面の表示調整では、現在のクラス・入口・業務処理を維持し、下記の新規作成／画面種別移行手順を機械的に実行しない。レスポンシブ対応は `references/responsive-layout.md` へ進む。
 
 1. まず `Standard Screen`、`screen_fields`、`db_additionals`、`post_action_class` で実現できない理由を確認する。ユーザーが「Original Screen指定」と明示している場合はその指定を優先する。

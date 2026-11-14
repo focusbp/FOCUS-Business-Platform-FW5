@@ -1,0 +1,6 @@
+{
+  "name": "standard-form",
+  "files": ["standard_form.tpl", "standard_form_style.tpl"],
+  "database": [],
+  "layout_css": "standard_form_style.tpl (scoped); existing framework CSS controls input appearance"
+}

@@ -17,6 +17,7 @@
 
 | 機能・依頼 | 区分 | 範囲・条件／非対応との境界 | 根拠Skill |
 | --- | --- | --- | --- |
+| 公開・独自管理画面のフォーム基本形 | 標準対応／追加開発 | standard-formサンプルで親フォーム・標準部品・エラー・右寄せ操作を一組で再利用。認証・CSRF・業務検証は各入口で実装。Standard Screenの自動CRUDは置換しない | fbp-app-samples、fbp-public-pages、fbp-original-screen、fbp-dialog |
 | DB・ノート・CRUD・検索・一覧 | 標準対応／追加開発 | 新規CRUDはStandard Screenを基本とする。排他はfixed_file_manager | fbp-db、fbp-standard-screen |
 | 独自画面・レスポンシブUI | 追加開発 | 標準画面で不足する業務UI、または明示指定 | fbp-original-screen |
 | 手書きフォームの静的チェック | 条件付き | ローカルのtemplate_check.shで.tplのinput/textarea/selectを警告。hidden・標準定義元・対象要素のdata-fbp_notice="手書き指定"または"既存本番互換"は除外。互換属性は変更対象の本番実績を確認して順次付与、一括付与しない。警告は終了コード0、実行時HTML・JS生成要素は解析しない | local-template-check、scripts/docs/template-check.md（検証済み） |
