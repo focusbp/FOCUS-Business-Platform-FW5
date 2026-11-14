@@ -1,6 +1,6 @@
 # FBP対応範囲リスト
 
-最終確認: 2026-11-13。事前チェック・実装前の共通判断に使う。詳細仕様の正本は各Skillと現行実装。この表は対応範囲の索引であり、対象アプリへの実装済み・契約上の提供・設定済み・利用許可を保証しない。
+最終確認: 2026-11-14。事前チェック・実装前の共通判断に使う。詳細仕様の正本は各Skillと現行実装。この表は対応範囲の索引であり、対象アプリへの実装済み・契約上の提供・設定済み・利用許可を保証しない。
 
 ## 判定方法
 
@@ -19,6 +19,7 @@
 | --- | --- | --- | --- |
 | DB・ノート・CRUD・検索・一覧 | 標準対応／追加開発 | 新規CRUDはStandard Screenを基本とする。排他はfixed_file_manager | fbp-db、fbp-standard-screen |
 | 独自画面・レスポンシブUI | 追加開発 | 標準画面で不足する業務UI、または明示指定 | fbp-original-screen |
+| 手書きフォームの静的チェック | 条件付き | ローカルのtemplate_check.shで.tplのinput/textarea/selectを警告。hidden・標準定義元・対象要素のdata-fbp_notice="手書き指定"は除外。警告は終了コード0、実行時HTML・JS生成要素は解析しない | local-auto-task、scripts/docs/template-check.md（検証済み） |
 | ダイアログ・サイドパネル・メニュー | 標準対応／追加開発 | 権限と親子構造に従う | fbp-dialog、fbp-side-panel、fbp-menu |
 | 集計・ダッシュボード・グラフ | 標準対応／追加開発 | 対応チャート・配置条件を確認 | fbp-dashboard |
 | CSV入出力・PDF出力・送り状CSV | 標準対応／追加開発 | 形式・文字コード・認証付き取得条件を確認 | fbp-csv、fbp-pdf、fbp-yamato-csv |
