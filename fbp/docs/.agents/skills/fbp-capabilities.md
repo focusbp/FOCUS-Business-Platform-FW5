@@ -39,7 +39,7 @@
 | 公式外部API連携・API認証・MCP | 条件付き | 提供元の公式API・設定・認証・権限を確認 | fbp-api-auth、fbp-mcp-server |
 | Square決済・店舗OAuth・サービス会員管理 | 条件付き | 契約・設定・対象店舗・決済実行許可が必要 | fbp-square-payment、fbp-square-oauth、fbp-service-user-management |
 | 管理認証・パスキー・DSP | 条件付き | 標準仕様と既存認可を確認。ローカルの正規data_* CLIはアプリDSPの保守例外（固定資格情報DSP・HTTP・アプリ実行検証は維持）。共通コード変更は別保守 | fbp-passkey、fbp-dsp |
-| 管理アプリ起点のマスターログイン | テスト実装・検証済み／本番未配布 | 管理アプリの通常ログイン済みマスターが、既存HTTPS/HMAC＋短期許可照会＋60秒単回券で共通認証先へログイン。最長30分・鍵管理は再認証。受信先別設定必須、独自認証は拒否。新しい署名鍵は不要 | [実装・設計](../../managed-master-login-design.md)、fbp-passkey、app-fwtest tests/managed-login |
+| 管理アプリ起点のマスターログイン | テスト検証済み／共通コード本番配布済み・個別有効化待ち | 管理アプリの通常ログイン済みマスターが、既存HTTPS/HMAC＋短期許可照会＋60秒単回券で共通認証先へログイン。最長30分・鍵管理は再認証。受信先別設定必須、独自認証は拒否。新しい署名鍵は不要 | [実装・設計](../../managed-master-login-design.md)、fbp-passkey、app-fwtest tests/managed-login |
 | WordPress／HTMLサイト移行 | 条件付き | 合意した取得範囲・編集方式・公開切替許可を守る | fbp-website-migration |
 | 継続業務としての外部サイト疑似操作 | 条件付き | 原則禁止。当該タスクの開発者による対象・操作・方式の明示許可がある場合だけ | local-auto-task |
 | 単発の外部サイト調査・操作 | 条件付き | 人間が指定した対象・操作の範囲だけ。閲覧依頼から更新許可を推測しない | local-auto-task |
