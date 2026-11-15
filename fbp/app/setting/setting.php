@@ -276,7 +276,9 @@ class setting {
 	}
 
 	function regenerate_setting_files(Controller $ctl, array $setting, ?string $htaccess_subpath = null): array {
-        ReleaseDefinitionPolicy::assertEditable($ctl->dirs->datadir);
+        if (!(PHP_SAPI === 'cli' && defined('FBP_SETTING_REGENERATE_COMMAND') && FBP_SETTING_REGENERATE_COMMAND === true)) {
+            ReleaseDefinitionPolicy::assertEditable($ctl->dirs->datadir);
+        }
 		$htaccess_path = dirname(__FILE__) . "/../../../.htaccess";
 		$existing_htaccess = is_file($htaccess_path) ? file_get_contents($htaccess_path) : "";
 		if ($existing_htaccess === false) {

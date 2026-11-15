@@ -2479,6 +2479,8 @@ if ($command === "setting_regenerate_files") {
 		if (empty($values)) {
 			throw new RuntimeException("setting row(1) was not found");
 		}
+		// This CLI maintenance command rebuilds files from existing settings only.
+		define('FBP_SETTING_REGENERATE_COMMAND', true);
 		$files = $handler->regenerate_setting_files($ctl, $values, $subpath);
 		cli_output_json(["ok" => true, "files" => $files], 0);
 	} catch (Throwable $e) {
