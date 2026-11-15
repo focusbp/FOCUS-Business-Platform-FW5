@@ -282,7 +282,7 @@
 						</tr>
 						<tr>
 							<td>{t key="setting.receive.port"}</td>
-							<td><input type="number" name="receive_port" value="{$setting.receive_port|escape}" min="1" max="65535"><br><small>{t key="setting.receive.port_help"}</small></td>
+							<td><input type="number" name="receive_port" value="{$setting.receive_port|escape}"><br><small>{t key="setting.receive.port_help"}</small></td>
 						</tr>
 						<tr>
 							<td>{t key="setting.receive.secure"}</td>

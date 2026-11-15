@@ -176,12 +176,6 @@ class setting {
 				throw new InvalidArgumentException($ctl->t("setting.receive.invalid"));
 			}
 		}
-		if (isset($values["receive_port"]) && $values["receive_port"] !== "") {
-			$port = $values["receive_port"];
-			if (!is_scalar($port) || !preg_match('/^[0-9]{1,5}$/D', (string) $port) || (int) $port < 1 || (int) $port > 65535) {
-				throw new InvalidArgumentException($ctl->t("setting.receive.invalid_port"));
-			}
-		}
 		return $values;
 	}
 

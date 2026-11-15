@@ -34,7 +34,7 @@
 | 簡易電子契約（2名のPDF承認） | 追加開発／検証済みサンプル | 管理画面の標準一覧・user由来の自分情報・相手の氏名/メール・PDF1件・最終確認で登録・双方メール認証と承認・証跡ZIP。承認URL10日、公開取得3日、管理側取得。SMTPは導入先設定、検証は模擬メール | fbp-app-samples/simple-electronic-contract、fbp-standard-screen、fbp-dialog、fbp-public-pages |
 | メール送信・確認コード | 標準対応／追加開発 | テンプレート・宛先・送信許可・検証条件に従う | fbp-send_email、fbp-email-confirm-dialog |
 | ローカル作業から「私宛にメール」 | 条件付き | ユーザーの明示的な送信依頼で、important@soshiki-kaikaku.comへ送信。AIが会話に応じて件名・本文を作成し、既存sendmail.shを使用。アプリのメール送信機能とは別 | local-mail-me（Skill検証済み、送信経路は既存実装） |
-| POP／IMAP受信処理 | 条件付き | 受信実行とサーバー側削除の許可を分ける | fbp-receive-mail |
+| POP／IMAP受信処理 | 条件付き | 受信実行とサーバー側削除の許可を分ける。開発パネルの受信ポート保存では1〜65535の範囲チェックを行わず、0も保存可 | fbp-receive-mail、app/setting/setting.php |
 | 定期処理・webhook・LINE連携 | 標準対応／追加開発 | 登録設定・本人との紐付け・外部送信許可が必要。cron定義はテスト変更→リリースで反映 | fbp-cron、fbp-webhook |
 | 公式外部API連携・API認証・MCP | 条件付き | 提供元の公式API・設定・認証・権限を確認 | fbp-api-auth、fbp-mcp-server |
 | Square決済・店舗OAuth・サービス会員管理 | 条件付き | 契約・設定・対象店舗・決済実行許可が必要 | fbp-square-payment、fbp-square-oauth、fbp-service-user-management |
