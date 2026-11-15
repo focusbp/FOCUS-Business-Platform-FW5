@@ -1,5 +1,10 @@
 # 変更履歴
 
+## 2026-11-15 ローカルデータCLIのDSP保守例外
+
+- 正規CLIのdata_list/get/add/update/deleteはアプリDSPによる拒否を適用せず、ローカル保守を可能にした。固定資格情報のDSPとHTTP・別PHP・アプリ実行検証の制御は維持。
+- app-fwtestの隔離データでネイティブCLIのCRUD成功と通常PHP・HTTPの拒否を確認。app-soshikikaikakuのテストで保護対象タスクの全件取得を確認。本番framework配布は未実施。
+
 ## 2026-11-15 管理画面用の簡易電子契約サンプル
 
 - Standard Screen一覧、user由来の自分情報、相手の氏名・メール→PDF1件→最終登録、双方メール認証・承認、証跡ZIP、再試行の独立サンプルを追加。コード・DB/メールmanifest・導入スクリプト・参照資料・Skill案内・READMEを整備。既存アプリや代理店区分への実行時依存はない。

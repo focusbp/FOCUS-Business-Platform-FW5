@@ -15,6 +15,13 @@ final class DspRuntime {
     private static array $preparing = [];
     private static array $pure = [];
 
+    /** OS-local data maintenance only; application/API simulations keep their policies. */
+    public static function isLocalDataMaintenance(): bool {
+        return PHP_SAPI === 'cli'
+            && realpath((string) ($_SERVER['SCRIPT_FILENAME'] ?? '')) === realpath(__DIR__ . '/../cli.php')
+            && in_array($_SERVER['argv'][1] ?? '', ['data_list', 'data_get', 'data_add', 'data_update', 'data_delete'], true);
+    }
+
     public static function isDisabled(?Controller $ctl): bool {
         if ($ctl === null || !method_exists($ctl, 'get_session')) return false;
         // Framework entry points refresh this server-owned setting before opening app DBs.
@@ -78,6 +85,9 @@ final class DspRuntime {
             require_once __DIR__ . '/../app/passkey/FrameworkPasskeyPolicy.php';
             return new FrameworkPasskeyPolicy($ctl, $channel);
         }
+        // Native data_* commands are trusted local maintenance. Fixed credential
+        // policies above (and integrationPolicy) remain in force.
+        if (self::isLocalDataMaintenance()) return null;
         $root = substr($path, 0, $pos) . '/classes/app/_dsp';
         $registry = $root . '/registry.php';
         if (!is_file($registry)) return null;

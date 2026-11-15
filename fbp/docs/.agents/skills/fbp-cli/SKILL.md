@@ -89,4 +89,5 @@ Developer Modeでも、web側CLIの `db_tables_add`／`db_tables_edit` でExcel�
 - shell 直打ち時の `--json='...'` クォート崩れが多い場合は、JSONファイルを作って `--json_file` 相当の入力に寄せる。
 
 ## constraints
+- OSローカルの正規 `cli.php` の `data_list` / `data_get` / `data_add` / `data_update` / `data_delete` は保守用操作としてアプリDSPを適用しない。HTTP、別PHP、`app_call` / `app_check` / `method_call` はこの例外に含めない。共通パスキー・確認コードなどframework固定の資格情報ポリシーは維持する。操作対象と更新・削除の許可は通常どおり確認する。
 - 実行ディレクトリは対象環境ルールに従う（環境固有は framework-development を参照）。
