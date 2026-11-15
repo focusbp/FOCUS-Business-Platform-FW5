@@ -3,6 +3,7 @@
 include dirname(__FILE__) . '/../../interface/FFM.php';
 require_once dirname(__DIR__) . '/DspRuntime.php';
 require_once dirname(__DIR__) . '/ExcelDefinitionGuard.php';
+require_once dirname(__DIR__) . '/ReleaseDefinitionPolicy.php';
 
 if (!class_exists("FixedFileManagerFieldLengthException", false)) {
 	class FixedFileManagerFieldLengthException extends Exception {
@@ -215,6 +216,7 @@ class fixed_file_manager implements FFM {
     }
 
     function insert(&$dataset) {
+        ReleaseDefinitionPolicy::assertWrite($this->filename, $this->datadir);
         $this->refresh_integration_policy();
         $position = is_resource($this->hf) ? ftell($this->hf) : null;
         try { return ExcelDefinitionGuard::write($this->filename, $this->datadir, function ($context) use (&$dataset) {
@@ -225,6 +227,7 @@ class fixed_file_manager implements FFM {
     }
 
     function update($dataset) {
+        ReleaseDefinitionPolicy::assertWrite($this->filename, $this->datadir);
         $this->refresh_integration_policy();
         $position = is_resource($this->hf) ? ftell($this->hf) : null;
         try { return ExcelDefinitionGuard::write($this->filename, $this->datadir, function ($context) use ($dataset) {
@@ -236,6 +239,7 @@ class fixed_file_manager implements FFM {
     }
 
     function delete($id) {
+        ReleaseDefinitionPolicy::assertWrite($this->filename, $this->datadir);
         $this->refresh_integration_policy();
         $position = is_resource($this->hf) ? ftell($this->hf) : null;
         try { return ExcelDefinitionGuard::write($this->filename, $this->datadir, function ($context) use ($id) {
@@ -553,6 +557,7 @@ class fixed_file_manager implements FFM {
 	 */
 
     public function allclear() {
+        ReleaseDefinitionPolicy::assertWrite($this->filename, $this->datadir);
         ExcelDefinitionGuard::write($this->filename, $this->datadir, function ($context) {
             ExcelDefinitionGuard::check($context, 'clear', null, null);
             $this->allclear_raw();
@@ -941,6 +946,7 @@ class fixed_file_manager implements FFM {
 	}
 
     public function restore_deleted_record(array $dataset): void {
+        ReleaseDefinitionPolicy::assertWrite($this->filename, $this->datadir);
         ExcelDefinitionGuard::write($this->filename, $this->datadir, function ($context) use ($dataset) {
             ExcelDefinitionGuard::check($context, 'insert', null, $dataset);
             $this->restore_deleted_record_raw($dataset);

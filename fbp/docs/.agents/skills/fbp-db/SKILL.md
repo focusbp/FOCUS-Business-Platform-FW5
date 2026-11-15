@@ -39,6 +39,7 @@ description: Manage the FBP DB lifecycle, schema and screen reflection, and appl
 6. `data_*` で実データ確認。
 
 ## definition release and runtime lifecycle
+- リリース対象の開発設定は本番で直接変更できないため、テストで変更してリリースする。
 - DB管理画面または `db_tables_*` / `db_fields_*` / `screen_fields_*` で作成した定義を正本にする。管理対象ノートの `.fmt` を手作業で作らない。
 - 通常のFBPリリースは `db`、`db_additionals` などのリリース対象 `.dat` と、生成済み `classes/data/_common/fmt/*.fmt` をアプリコードと一緒に本番へコピーする。
 - 本番に対象ノートの実データ `.dat` がまだ存在しない場合、FBPはコピー済み `.fmt` を使い、最初のDBアクセス時に `.dat` を自動作成する。新規配布用に `db_tables_add` / `db_fields_add` を再実行する常設migrationを追加しない。

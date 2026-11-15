@@ -18,7 +18,7 @@
 | 機能・依頼 | 区分 | 範囲・条件／非対応との境界 | 根拠Skill |
 | --- | --- | --- | --- |
 | 公開・独自管理画面のフォーム基本形 | 標準対応／追加開発 | standard-formサンプルで親フォーム・標準部品・エラー・右寄せ操作を一組で再利用。認証・CSRF・業務検証は各入口で実装。Standard Screenの自動CRUDは置換しない | fbp-app-samples、fbp-public-pages、fbp-original-screen、fbp-dialog |
-| DB・ノート・CRUD・検索・一覧 | 標準対応／追加開発 | 新規CRUDはStandard Screenを基本とする。排他はfixed_file_manager | fbp-db、fbp-standard-screen |
+| DB・ノート・CRUD・検索・一覧 | 標準対応／追加開発 | 新規CRUDはStandard Screenを基本とする。排他はfixed_file_manager。リリース対象設定はテスト変更→リリースで反映 | fbp-db、fbp-standard-screen |
 | 独自画面・レスポンシブUI | 追加開発 | 標準画面で不足する業務UI、または明示指定 | fbp-original-screen |
 | 手書きフォームの静的チェック | 条件付き | ローカルのtemplate_check.shで.tplのinput/textarea/selectを警告。hidden・標準定義元・対象要素のdata-fbp_notice="手書き指定"または"既存本番互換"は除外。互換属性は変更対象の本番実績を確認して順次付与、一括付与しない。警告は終了コード0、実行時HTML・JS生成要素は解析しない | local-template-check、scripts/docs/template-check.md（検証済み） |
 | ダイアログ・サイドパネル・メニュー | 標準対応／追加開発 | 権限と親子構造に従う | fbp-dialog、fbp-side-panel、fbp-menu |
@@ -35,10 +35,11 @@
 | メール送信・確認コード | 標準対応／追加開発 | テンプレート・宛先・送信許可・検証条件に従う | fbp-send_email、fbp-email-confirm-dialog |
 | ローカル作業から「私宛にメール」 | 条件付き | ユーザーの明示的な送信依頼で、important@soshiki-kaikaku.comへ送信。AIが会話に応じて件名・本文を作成し、既存sendmail.shを使用。アプリのメール送信機能とは別 | local-mail-me（Skill検証済み、送信経路は既存実装） |
 | POP／IMAP受信処理 | 条件付き | 受信実行とサーバー側削除の許可を分ける | fbp-receive-mail |
-| 定期処理・webhook・LINE連携 | 標準対応／追加開発 | 登録設定・本人との紐付け・外部送信許可が必要 | fbp-cron、fbp-webhook |
+| 定期処理・webhook・LINE連携 | 標準対応／追加開発 | 登録設定・本人との紐付け・外部送信許可が必要。cron定義はテスト変更→リリースで反映 | fbp-cron、fbp-webhook |
 | 公式外部API連携・API認証・MCP | 条件付き | 提供元の公式API・設定・認証・権限を確認 | fbp-api-auth、fbp-mcp-server |
 | Square決済・店舗OAuth・サービス会員管理 | 条件付き | 契約・設定・対象店舗・決済実行許可が必要 | fbp-square-payment、fbp-square-oauth、fbp-service-user-management |
 | 管理認証・パスキー・DSP | 条件付き | 標準仕様と既存認可を確認。ローカルの正規data_* CLIはアプリDSPの保守例外（固定資格情報DSP・HTTP・アプリ実行検証は維持）。共通コード変更は別保守 | fbp-passkey、fbp-dsp |
+| 管理アプリ起点のマスターログイン | テスト実装・検証済み／本番未配布 | 管理アプリの通常ログイン済みマスターが、既存HTTPS/HMAC＋短期許可照会＋60秒単回券で共通認証先へログイン。最長30分・鍵管理は再認証。受信先別設定必須、独自認証は拒否。新しい署名鍵は不要 | [実装・設計](../../managed-master-login-design.md)、fbp-passkey、app-fwtest tests/managed-login |
 | WordPress／HTMLサイト移行 | 条件付き | 合意した取得範囲・編集方式・公開切替許可を守る | fbp-website-migration |
 | 継続業務としての外部サイト疑似操作 | 条件付き | 原則禁止。当該タスクの開発者による対象・操作・方式の明示許可がある場合だけ | local-auto-task |
 | 単発の外部サイト調査・操作 | 条件付き | 人間が指定した対象・操作の範囲だけ。閲覧依頼から更新許可を推測しない | local-auto-task |

@@ -601,6 +601,18 @@ try{
         ManagementAuthentication::respond($ctl);
         exit;
     }
+    if ($e instanceof ReleaseDefinitionReadOnly) {
+        http_response_code(403);
+        if (($class ?? '') === 'db_api' || ($class ?? '') === 'setting_api') {
+            header('Content-Type: application/json; charset=UTF-8');
+            echo json_encode(['ok'=>false, 'error_code'=>ReleaseDefinitionReadOnly::ERROR_CODE, 'error'=>$e->getMessage()], JSON_UNESCAPED_UNICODE);
+        } elseif (isset($ctl)) {
+            $ctl->res_error_message('release_definition', $e->getMessage());
+            $ctl->show_notification_text($e->getMessage());
+            $ctl->res();
+        }
+        exit;
+    }
     if ($e instanceof ExcelDefinitionReadOnly) {
         if (($class ?? '') === 'db_api') {
             http_response_code(409);

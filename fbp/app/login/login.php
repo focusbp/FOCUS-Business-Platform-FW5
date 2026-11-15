@@ -64,6 +64,28 @@ class login {
         $ctl->display('onetimecode.tpl');
     }
 	
+    function managed_master(Controller $ctl) {
+        require_once __DIR__.'/ManagedMasterLoginService.php';
+        $ctl->stop_res=true;
+        header('Cache-Control: no-store');header('Referrer-Policy: same-origin');header('X-Frame-Options: DENY');
+        header("Content-Security-Policy: frame-ancestors 'none'; form-action 'self'");
+        try {
+            if (($_SERVER['REQUEST_METHOD']??'')!=='POST') throw new RuntimeException('POST required.');
+            $service=new ManagedMasterLoginService($ctl);$ticket=ManagedMasterLoginService::code($ctl->POST('ticket'));
+            if ($ctl->POST('complete')==='1') {
+                $csrf=$ctl->POST('csrf');if(!is_string($csrf))throw new RuntimeException('Invalid form.');
+                $service->consume($ticket,$csrf,function(array $user)use($ctl){
+                    PasskeyService::clearAuth($ctl);unset($_SESSION['mcp_oauth_authorize_return']);
+                    $this->login_ok($ctl,$user,(string)$user['login_id'],'','managed_master');
+                });return;
+            }
+            $form=$service->bridge($ticket);
+            $ctl->assign('managed_form',$form);$ctl->assign('managed_action',preg_replace('/^http:/','https:',$ctl->get_APP_URL('login','managed_master')));
+            $ctl->assign('managed_window',$ctl->get_windowcode());$ctl->assign('managed_cookie_path',cookie_path());
+            $ctl->display('managed_master.tpl');
+        } catch (Throwable $e) {http_response_code(403);echo 'ログイン許可を確認できません。管理アプリからやり直してください。';}
+    }
+
 	function make_new_account(Controller $ctl){
 		$pending = $ctl->get_session($this->pending_account_session_key);
 		if (!is_array($pending) || empty($pending["login_id"]) || empty($pending["password"])) {
@@ -504,8 +526,9 @@ class login {
 	}
 
 	function login_ok(Controller $ctl, $user, $login_id, $password, string $authentication = 'password') {
-		$codeLogin = $authentication === 'onetimecode';
-        if ($codeLogin && (!class_exists('OnetimecodeService', false) || !OnetimecodeService::hasGrant($ctl, (int)$user['id']))) {
+		$codeLogin = in_array($authentication, ['onetimecode','managed_master'], true);
+        if ($authentication === 'managed_master' && (!class_exists('ManagedMasterLoginService',false) || !ManagedMasterLoginService::hasGrant($ctl,(int)$user['id']))) throw new RuntimeException('Managed login grant required.');
+        if ($authentication === 'onetimecode' && (!class_exists('OnetimecodeService', false) || !OnetimecodeService::hasGrant($ctl, (int)$user['id']))) {
             throw new RuntimeException('One-time login grant required.');
         }
 		// Read current identity only after opening all participating FFM databases.

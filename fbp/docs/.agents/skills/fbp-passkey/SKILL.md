@@ -71,3 +71,11 @@ FFMは複数DBの一括ロールバックを提供しない。失効を先に行
 ## 共通版の検証資産
 
 専用検証アプリのtests/passkeyにsecurity.php、config.php、cli-recovery.php、notification.php、browser.cjs、password-policy-browser.cjsを置く。実行はruntime側を対象にし、署名・CLI・HTTP fixtureは新規の隔離作業領域を使う。テスト用資格情報と実データを本番へ移さない。通常ログイン用の既存Cookie・セッションを独自互換処理で新epochへ引き継がない。
+
+## 管理アプリ起点のマスターログイン
+
+共通認証に`managed_master`を追加。既存HMAC・本文ハッシュで受信準備APIを呼び、管理アプリが発行した許可を受信先が固定の照会先へ確認した後、60秒・1回限りの券を発行する。通常APIキーだけでの発行は不可。受信先の同一Originフォームから通常管理セッションへ接続し、最長30分・remember-meなし・鍵管理は実パスキーで再認証する。
+
+実配置の設定がない場合は無効。本番配布済みとは扱わない。管理アプリ側は通常ログインしたマスターのみ発行でき、一時認証からの再委譲は禁止。AI確認用onetimecodeとは別経路として維持する。
+
+実装・設定と境界条件は[管理アプリ起点ログイン](../../../managed-master-login-design.md)、検証はapp-fwtestのtests/managed-loginを参照する。URLやログへ券を出さず、固定の許可・券領域を通常DB APIから開放しない。

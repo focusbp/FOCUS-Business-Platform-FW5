@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/../../lib/CronExecutionLog.php';
 
 
 class cron {
@@ -95,13 +96,10 @@ class cron {
 			// The job may have closed all DBs. Use Controller's cache/ordered FFM constructor.
 			// Keep the existing pre-execution lock lifetime; do not introduce a separate lock.
 			$this->ffm_cron = $ctl->db("cron", "cron");
-			if (!empty($this->ffm_cron->get($id))) {
-				// Only update the log, preserving edits made while the job was running.
-				$this->ffm_cron->update([
-					"id" => $id,
-					"last_log" => mb_strcut($last_log, 0, 1000, "UTF-8"),
-				]);
-			}
+            $logs = $ctl->db('logs', 'cron_runtime');
+            $job = $this->ffm_cron->get($id);
+            if ($job) CronExecutionLog::save($logs, $d, $last_log);
+
 			if ($error !== null) {
 				// Let app.php report the original failure to ServerError after saving the log.
 				throw $error;
@@ -119,7 +117,8 @@ class cron {
 
 		$post = $ctl->POST();
 		$ctl->assign('post', $post);
-		$items = $this->ffm_cron->getall("sort", SORT_ASC);
+		$logs = $ctl->db('logs', 'cron_runtime');
+        $items = CronExecutionLog::overlay($logs, $this->ffm_cron->getall("sort", SORT_ASC));
 		foreach($items as &$item){
 			$item["_id_enc"] = $ctl->encrypt($item["id"]);
 		}

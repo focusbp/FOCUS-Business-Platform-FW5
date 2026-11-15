@@ -107,7 +107,7 @@ class setting {
 			$ctl->show_notification_text($e->getMessage());
 			return;
 		}
-		$this->regenerate_setting_files($ctl, $setting);
+		if (ExcelDefinitionGuard::isDeveloper($ctl->dirs->datadir)) $this->regenerate_setting_files($ctl, $setting);
 
 		// Login Logo
 		if ($ctl->is_posted_file("login_logo")) {
@@ -149,7 +149,7 @@ class setting {
 
 	function api_update_setting(Controller $ctl, array $data): array {
 		$setting = $this->save_setting_values($ctl, $data, true);
-		$files = $this->regenerate_setting_files($ctl, $setting);
+		$files = ExcelDefinitionGuard::isDeveloper($ctl->dirs->datadir) ? $this->regenerate_setting_files($ctl, $setting) : [];
 		return [
 			"setting" => $setting,
 			"files" => $files,
@@ -192,6 +192,12 @@ class setting {
 			$setting = array();
 			$this->ffm->insert($setting);
 		}
+        foreach (['rewrite_rule_root', 'rewrite_rule_function', 'default_class_name', 'ssl', 'robots'] as $field) {
+            if (array_key_exists($field, $values) && (string)$values[$field] !== (string)($setting[$field] ?? '')) {
+                ReleaseDefinitionPolicy::assertEditable($ctl->dirs->datadir);
+                break;
+            }
+        }
 		$known_fields = $filter_known_fields ? $this->get_setting_field_names() : null;
 		foreach ($values as $key => $val) {
 			$key = (string) $key;
@@ -270,6 +276,7 @@ class setting {
 	}
 
 	function regenerate_setting_files(Controller $ctl, array $setting, ?string $htaccess_subpath = null): array {
+        ReleaseDefinitionPolicy::assertEditable($ctl->dirs->datadir);
 		$htaccess_path = dirname(__FILE__) . "/../../../.htaccess";
 		$existing_htaccess = is_file($htaccess_path) ? file_get_contents($htaccess_path) : "";
 		if ($existing_htaccess === false) {
@@ -675,7 +682,7 @@ class setting {
 			$ctl->show_notification_text($e->getMessage());
 			return;
 		}
-		$this->regenerate_setting_files($ctl, $values);
+		if (ExcelDefinitionGuard::isDeveloper($ctl->dirs->datadir)) $this->regenerate_setting_files($ctl, $values);
 		try {
 			require_once __DIR__ . "/../../lib/ReceiveConnectionTest.php";
 			fbp_test_receive_connection($values);

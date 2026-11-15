@@ -62,6 +62,7 @@ class public_assets {
 	}
 
 	function edit_exe(Controller $ctl) {
+        ReleaseDefinitionPolicy::assertEditable($ctl->dirs->datadir);
 		$post = $this->normalize_post($ctl->POST());
 		$id = (int) ($post["id"] ?? 0);
 		$data = $this->fmt_assets->get($id);
@@ -111,6 +112,7 @@ class public_assets {
 	}
 
 	function delete_exe(Controller $ctl) {
+        ReleaseDefinitionPolicy::assertEditable($ctl->dirs->datadir);
 		$id = (int) $ctl->POST("id");
 		$data = $this->fmt_assets->get($id);
 		if (is_array($data) && count($data) > 0) {
@@ -142,6 +144,7 @@ class public_assets {
 	}
 
 	public function store_uploaded_asset(Controller $ctl, int $enabled = 1): array {
+        ReleaseDefinitionPolicy::assertEditable($ctl->dirs->datadir);
 		$post = $this->normalize_post($ctl->POST());
 		$post["title"] = "";
 		$post["asset_key"] = $this->build_random_asset_key();

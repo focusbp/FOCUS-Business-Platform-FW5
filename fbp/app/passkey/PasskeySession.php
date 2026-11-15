@@ -8,7 +8,7 @@ final class PasskeySession {
     }
     private static function checkSession(Controller $ctl) {
         if (!$ctl->get_session('login')) return null;
-        if ($ctl->get_session('passkey_authentication_method') === 'onetimecode'
+        if (in_array($ctl->get_session('passkey_authentication_method'), ['onetimecode','managed_master'], true)
             && (int)$ctl->get_session('onetimecode_session_expires') <= time()) {
             PasskeyService::clearAuth($ctl);
             $ctl->res_redirect($ctl->get_APP_URL('login','page'));

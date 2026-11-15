@@ -6,6 +6,9 @@ final class FrameworkPasskeyPolicy implements DspInterface {
     private function check(): void {
         if (PHP_SAPI==='cli' && $this->channel==='cli' && $this->ctl->get_classname()==='passkey' && $this->ctl->get_called_function()==='emergency_cli_recovery' && defined('PASSKEY_ADMIN_RECOVERY_CONFIRMED') && PASSKEY_ADMIN_RECOVERY_CONFIRMED===true) return;
         $subject=$this->ctl->get_dsp_system_subject();
+        if (class_exists('ManagedLoginScope', false) && ManagedLoginScope::active($this->ctl)
+            && in_array($this->ctl->get_classname(), ['managed_login_api','sftp_master_login_api','sftp_master_login','sftp_server_setting'], true)
+            && (($this->channel==='api' && ($subject['verified']??false)===true && ($subject['kind']??'')==='api') || $this->channel==='admin')) return;
         if ($this->channel==='api' && $this->ctl->get_classname()==='login_api' && $this->ctl->get_called_function()==='issue_onetimecode' && ($subject['verified']??false)===true && ($subject['kind']??'')==='api') return;
         if ($this->channel==='api' && $this->ctl->get_classname()==='db_api' && ($subject['verified']??false)===true && ($subject['kind']??'')==='api') return;
         // Production frameworks classify unauthenticated authentication entries as public.

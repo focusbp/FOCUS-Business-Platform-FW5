@@ -1,31 +1,10 @@
 <?php
+require_once __DIR__.'/../../lib/ReleaseDefinitionPolicy.php';
 
 class ReleaseManager {
 
-	// Copy list of the databases
-	private $db_copy_list = [
-	    "lang",
-	    "email_format",
-	    "db",
-	    "constant_array",
-	    "webhook_rule",
-	    "embed_app",
-	    "public_assets",
-	    "public_pages_registry",
-	    "db_additionals",
-        "dsp",
-	    "dashboard",
-	    "cron",
-	    "api_studio"
-	];
-	private $db_file_copy_list = [
-	    "mcp_manage" => [
-	        "mcp_server_config.dat",
-	        "mcp_functions.dat",
-	        "mcp_tools.dat",
-	        "mcp_tool_fields.dat",
-	    ],
-	];
+    private $db_copy_list = ReleaseDefinitionPolicy::DATA_SETS;
+    private $db_file_copy_list = ReleaseDefinitionPolicy::SELECTED_FILES;
 	private $root_file_copy_list = [
 		".htaccess",
 		"robots.txt",

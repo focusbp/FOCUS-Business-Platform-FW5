@@ -1,0 +1,5 @@
+id,24,N
+job_id,24,N
+class_name,255,T
+function_name,255,T
+last_log,1000,T

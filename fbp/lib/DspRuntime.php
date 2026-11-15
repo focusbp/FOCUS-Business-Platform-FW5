@@ -131,6 +131,12 @@ final class DspRuntime {
     public static function integrationPolicy(string $datadir, string $table, ?Controller $ctl, string $channel, ?string $databaseClass = null): ?DspInterface {
         // Credential storage remains protected even when application DSP is disabled.
         $credentialPath = str_replace('\\', '/', realpath($datadir) ?: $datadir);
+        if (($table === 'master_ticket' && str_ends_with($credentialPath, '/classes/data/login'))
+            || ($table === 'permits' && str_ends_with($credentialPath, '/classes/data/sftp_master_login'))) {
+            if ($ctl === null) throw new DspException('context', 'controller_required');
+            require_once __DIR__ . '/../app/login/FrameworkManagedLoginPolicy.php';
+            return new FrameworkManagedLoginPolicy($ctl, $channel);
+        }
         if ($table === 'onetimecode' && str_ends_with($credentialPath, '/classes/data/login')) {
             if ($ctl === null) throw new DspException('context', 'controller_required');
             require_once __DIR__ . '/../app/login/FrameworkOnetimecodePolicy.php';

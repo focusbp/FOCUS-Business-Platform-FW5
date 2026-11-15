@@ -879,6 +879,7 @@ class db {
 
 	//delete data form database
 	function delete_exe(Controller $ctl) {
+        ReleaseDefinitionPolicy::assertEditable($ctl->dirs->datadir);
 		$id = $ctl->POST("id");
 		$data = $this->fmt_db->get($id);
 		$tb_name = (string) ($data["tb_name"] ?? "");
@@ -1375,6 +1376,7 @@ class db {
 
 	// make table format
 	function make_table_format(Controller $ctl) {
+        ReleaseDefinitionPolicy::assertEditable($ctl->dirs->datadir);
 
 		$dirs = new Dirs();
 		$dir = $dirs->get_class_dir("common") . "/fmt/";

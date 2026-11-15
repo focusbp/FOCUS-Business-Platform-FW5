@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__.'/ReleaseDefinitionPolicy.php';
 
 /** Dedicated import validation and compatibility hooks for Excel definitions. */
 final class ExcelDefinitionReadOnly extends RuntimeException {
@@ -22,10 +23,10 @@ final class ExcelDefinitionGuard {
         return in_array($class.'/'.$table, ['db/db', 'db/db_fields', 'excel_grid/settings'], true) ? $class.'/'.$table : null;
     }
     /** Open all dependencies first; FFM restores lock order and refreshes headers. */
-    private static function references(string $root, callable $callback): mixed {
+    private static function references(string $root, callable $callback, array $names = ['db/db', 'excel_grid/settings', 'setting/setting']): mixed {
         $opened = []; $refs = [];
         try {
-            foreach (['db/db', 'excel_grid/settings', 'setting/setting'] as $name) {
+            foreach ($names as $name) {
                 $path = $root.'/'.$name.'.dat';
                 if (!is_file($path)) continue;
                 $path = realpath($path);
@@ -48,7 +49,7 @@ final class ExcelDefinitionGuard {
         return (int)$mode === 1;
     }
     public static function isDeveloper(string $dataRoot): bool {
-        return self::references(realpath($dataRoot) ?: $dataRoot, fn($rows) => self::developer($rows));
+        return self::references(realpath($dataRoot) ?: $dataRoot, fn($rows) => self::developer($rows), ['setting/setting']);
     }
     // 0/empty preserves ON for existing projects; 1 is explicit OFF.
     public static function noteCreationEnabled(array $setting): bool {
@@ -57,19 +58,19 @@ final class ExcelDefinitionGuard {
     public static function assertNoteCreationAllowed(Controller $ctl): void {
         if (!$ctl->is_app_admin() && !$ctl->has_developer_permission()) throw new RuntimeException('ノートの追加には管理者または開発権限が必要です。');
         $setting = $ctl->db('setting', 'setting')->get(1) ?: [];
-        if (!self::isDeveloper($ctl->dirs->datadir)) throw new ExcelDefinitionReadOnly('本番のノート追加はプロジェクトサポートへ依頼してください。');
+        ReleaseDefinitionPolicy::assertEditable($ctl->dirs->datadir);
         if (!self::noteCreationEnabled($setting)) throw new RuntimeException('Excel風ノートの追加はシステム設定で無効になっています。');
     }
     public static function assertEditable(string $dataRoot): void {
-        if (!self::isDeveloper($dataRoot)) throw new ExcelDefinitionReadOnly('ノートの構成変更はプロジェクトサポートへ依頼してください。');
+        ReleaseDefinitionPolicy::assertEditable($dataRoot);
     }
-    /** Compatibility hook: ordinary FFM authorization still applies in both modes. */
+    /** Compatibility hook; release-owned writes are checked by ReleaseDefinitionPolicy. */
     public static function write(string $table, string $directory, callable $callback): mixed {
         return $callback(null);
     }
     public static function check(?array $context, string $operation, ?array $before, ?array $after): void {
-        // Developer Mode now permits the same definition writes as Production Mode.
-        // Production sync/import validation below remains separate from ordinary writes.
+        // ReleaseDefinitionPolicy enforces mode restrictions before this hook.
+        // Import validation below remains separate from ordinary writes.
     }
     /** Import an existing production spreadsheet note identity, never renumber local notes. */
     public static function importNote(string $dataRoot, fixed_file_manager $db, array $note): array {

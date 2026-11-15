@@ -64,9 +64,9 @@ trait ExcelGridActions {
     }
     private function excelError(Controller $ctl,Throwable $e): void {
         $ctl->res_error_message('excel_error',$e->getMessage());
-        if ($e instanceof ExcelDefinitionReadOnly) {
+        if (($e instanceof ExcelDefinitionReadOnly || $e instanceof ReleaseDefinitionReadOnly)) {
             $ctl->append_res_data('ok', false);
-            $ctl->append_res_data('error', ['code'=>ExcelDefinitionReadOnly::ERROR_CODE, 'message'=>$e->getMessage()]);
+            $ctl->append_res_data('error', ['code'=>$e instanceof ReleaseDefinitionReadOnly ? ReleaseDefinitionReadOnly::ERROR_CODE : ExcelDefinitionReadOnly::ERROR_CODE, 'message'=>$e->getMessage()]);
         }
     }
     private function excelRefresh(Controller $ctl): void { $this->excel_page($ctl); }
@@ -159,7 +159,7 @@ trait ExcelGridActions {
             $ctl->assign('excel_column_move_token',$this->excelToken($ctl,'column_move',['revision'=>(int)$cfg['revision']]));
             $ctl->assign('excel_move_token',$this->excelToken($ctl,'move',['ids'=>array_map(fn($r)=>(int)$r['id'],$rows)]));
             $ctl->show_main_area('excel.tpl',$this->title);
-        } catch (Throwable $e) { if ($e instanceof ExcelDefinitionReadOnly) $this->excelError($ctl,$e); $ctl->show_notification_text($e->getMessage()); }
+        } catch (Throwable $e) { if (($e instanceof ExcelDefinitionReadOnly || $e instanceof ReleaseDefinitionReadOnly)) $this->excelError($ctl,$e); $ctl->show_notification_text($e->getMessage()); }
     }
     function excel_column(Controller $ctl) {
         try {
@@ -174,7 +174,7 @@ trait ExcelGridActions {
             $ctl->assign('excel_types',['text'=>'文字列','textarea'=>'長文','number'=>'整数','float'=>'小数','date'=>'日付','datetime'=>'日時','time'=>'時刻','year_month'=>'年月','dropdown'=>'選択肢']);
             $ctl->assign('excel_option_rows',ExcelGrid::optionRows($c));
             $ctl->show_multi_dialog('excel-editor','excel_column.tpl',strtoupper($name).' 項目設定',360,null,['modal'=>true]);
-        } catch (Throwable $e) { if ($e instanceof ExcelDefinitionReadOnly) $this->excelError($ctl,$e); $ctl->show_notification_text($e->getMessage()); }
+        } catch (Throwable $e) { if (($e instanceof ExcelDefinitionReadOnly || $e instanceof ReleaseDefinitionReadOnly)) $this->excelError($ctl,$e); $ctl->show_notification_text($e->getMessage()); }
     }
     function excel_column_save(Controller $ctl) {
         $ctl->clear_error_message();
@@ -243,7 +243,7 @@ trait ExcelGridActions {
             $ctl->assign('excel_error_text',$errors[$name] ?? ''); $ctl->assign('excel_col',$name); $ctl->assign('row',$row);
             $ctl->assign('excel_token',$this->excelToken($ctl,'cell',['column'=>$name,'id'=>$id,'version'=>ExcelGrid::version($row),'revision'=>$cfg['revision']]));
             $ctl->show_multi_dialog('excel-editor','excel_cell.tpl',strtoupper($name).' '.($c['title'] ?: ($id?'入力':'新しい行')),320,null,['modal'=>true]);
-        } catch (Throwable $e) { if ($e instanceof ExcelDefinitionReadOnly) $this->excelError($ctl,$e); $ctl->show_notification_text($e->getMessage()); }
+        } catch (Throwable $e) { if (($e instanceof ExcelDefinitionReadOnly || $e instanceof ReleaseDefinitionReadOnly)) $this->excelError($ctl,$e); $ctl->show_notification_text($e->getMessage()); }
     }
     private function excelCalculate(Controller $ctl,array $row,array $before,string $from): array {
         $previous=$this->excel_in_hook; $this->excel_in_hook=true;
@@ -303,7 +303,7 @@ trait ExcelGridActions {
             $errors=$this->excelCalculate($ctl,$this->ffm->get($id),[],'add');
             $this->excelRefresh($ctl);
             if ($errors) $ctl->show_notification_text('行を追加しました。ERROR: '.implode(' / ',array_unique(array_values($errors))));
-        } catch (Throwable $e) { if ($e instanceof ExcelDefinitionReadOnly) $this->excelError($ctl,$e); $ctl->show_notification_text($e->getMessage()); }
+        } catch (Throwable $e) { if (($e instanceof ExcelDefinitionReadOnly || $e instanceof ReleaseDefinitionReadOnly)) $this->excelError($ctl,$e); $ctl->show_notification_text($e->getMessage()); }
     }
     function excel_row_menu(Controller $ctl) {
         try {
@@ -312,7 +312,7 @@ trait ExcelGridActions {
             $ctl->assign('excel_row_id',$id); $ctl->assign('excel_clip_available',(bool)$ctl->get_session('excel_clip_'.$this->table_name));
             $ctl->assign('excel_token',$this->excelToken($ctl,'row',['id'=>$id,'version'=>ExcelGrid::version($row),'revision'=>$cfg['revision'],'clip_version'=>($ctl->get_session('excel_clip_'.$this->table_name)['version'] ?? '')]));
             $ctl->show_multi_dialog('excel-editor','excel_row.tpl',$id?'行の操作':'新しい行',280,null,['modal'=>true]);
-        } catch (Throwable $e) { if ($e instanceof ExcelDefinitionReadOnly) $this->excelError($ctl,$e); $ctl->show_notification_text($e->getMessage()); }
+        } catch (Throwable $e) { if (($e instanceof ExcelDefinitionReadOnly || $e instanceof ReleaseDefinitionReadOnly)) $this->excelError($ctl,$e); $ctl->show_notification_text($e->getMessage()); }
     }
     function excel_row_action(Controller $ctl) {
         try {
@@ -374,7 +374,7 @@ trait ExcelGridActions {
                 'token'=>$this->excelToken($ctl,'column_width',['revision'=>(int)$saved['revision']]),
                 'move_token'=>$this->excelToken($ctl,'column_move',['revision'=>(int)$saved['revision']])]);
         } catch (Throwable $e) {
-            if ($e instanceof ExcelDefinitionReadOnly) $this->excelError($ctl,$e);
+            if (($e instanceof ExcelDefinitionReadOnly || $e instanceof ReleaseDefinitionReadOnly)) $this->excelError($ctl,$e);
             $ctl->append_res_data('excel_column_width_result',['ok'=>false,'db_id'=>(int)$this->db_setting_id,'error'=>$e->getMessage()]);
         }
     }
@@ -391,7 +391,7 @@ trait ExcelGridActions {
             ExcelGrid::saveConfig($ctl,$this->table_name,$cfg['columns'] ?: [],$order);
             $this->excelDone($ctl); $this->excelRefresh($ctl);
         } catch (Throwable $e) {
-            if ($e instanceof ExcelDefinitionReadOnly) $this->excelError($ctl,$e);
+            if (($e instanceof ExcelDefinitionReadOnly || $e instanceof ReleaseDefinitionReadOnly)) $this->excelError($ctl,$e);
             $ctl->assign('excel_message',$e->getMessage());
             $ctl->show_multi_dialog('excel-editor','excel_message.tpl','列の移動',320,null,['modal'=>true]);
         }
@@ -407,7 +407,7 @@ trait ExcelGridActions {
             $this->excelRow($ctl,$id); $this->excelRow($ctl,$target);
             $this->excelPlace($ctl,$id,$target,$ctl->POST('after')!=='1'); $this->excelDone($ctl); $this->excelRefresh($ctl);
         } catch (Throwable $e) {
-            if ($e instanceof ExcelDefinitionReadOnly) $this->excelError($ctl,$e);
+            if (($e instanceof ExcelDefinitionReadOnly || $e instanceof ReleaseDefinitionReadOnly)) $this->excelError($ctl,$e);
             $ctl->assign('excel_message',$e->getMessage());
             $ctl->show_multi_dialog('excel-editor','excel_message.tpl','行の移動',320,null,['modal'=>true]);
         }
