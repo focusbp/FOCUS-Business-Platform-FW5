@@ -3,7 +3,7 @@
 ## 2026-11-15 ローカルデータCLIのDSP保守例外
 
 - 正規CLIのdata_list/get/add/update/deleteはアプリDSPによる拒否を適用せず、ローカル保守を可能にした。固定資格情報のDSPとHTTP・別PHP・アプリ実行検証の制御は維持。
-- app-fwtestの隔離データでネイティブCLIのCRUD成功と通常PHP・HTTPの拒否を確認。app-soshikikaikakuのテストで保護対象タスクの全件取得を確認。本番framework配布は未実施。
+- app-fwtestの隔離データでネイティブCLIのCRUD成功と通常PHP・HTTPの拒否を確認。app-soshikikaikakuのテストで保護対象タスクの全件取得を確認。2026-11-15に標準frameworkリリースを実施。sv005・sv007・sv008で正常終了し、配布元DspRuntime.phpのSHA-256一致を確認。サーバー別運用記録は既存auto-taskの終了待ちのため未記録。
 
 ## 2026-11-15 管理画面用の簡易電子契約サンプル
 
