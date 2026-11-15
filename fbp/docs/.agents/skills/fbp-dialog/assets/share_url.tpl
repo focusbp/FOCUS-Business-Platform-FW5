@@ -10,10 +10,8 @@
 .fbp-share-url-control .fbp-share-url-copy{display:flex;align-items:center;justify-content:center;gap:6px;flex:none;width:48px;min-width:48px;margin:0;padding:0 14px;border:0;border-left:1px solid #cbd5e1;border-radius:0;background:var(--fbp-framework-primary-color, #4BA3FF);color:var(--fbp-framework-primary-text-color, #FFF);font-size:14px;cursor:pointer}
 .fbp-share-url-control .fbp-share-url-copy:focus-visible,.fbp-share-url-text:focus-visible{outline:2px solid var(--fbp-framework-primary-color, #4BA3FF);outline-offset:-3px}
 .fbp-share-url-share .material-symbols-outlined{font-size:18px}
-.fbp-share-url-footer{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px;margin-top:8px;font-size:14px;min-height:20px}
 .fbp-share-url-text:hover{text-decoration:underline;color:var(--fbp-framework-primary-color, #4BA3FF)}
-.fbp-share-url-status{color:var(--fbp-framework-primary-color, #4BA3FF);font-size:13px}
-.fbp-share-url-status.is-error{color:#b91c1c}
+.fbp-share-url-status{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(max-width:480px){.fbp-share-url-control .fbp-share-url-copy{width:48px;min-width:48px;padding:0 10px}.fbp-share-url-help{font-size:13px}}
 @media(max-width:700px){.multi_dialog:has(.fbp-share-url-share){max-width:calc(100vw - 20px);left:10px!important}}
 {/literal}</style>
@@ -26,7 +24,7 @@ $(document).off('click.fbpShareUrlCopy', '.fbp-share-url-copy').on('click.fbpSha
         await navigator.clipboard.writeText(button.attr('data-copy'));
         button.find('.material-symbols-outlined').text('check');
         button.attr('title', 'コピーしました').attr('aria-label', 'コピーしました');
-        status.removeClass('is-error').text('コピーしました');
+        status.text('コピーしました');
     } catch (e) {
         const value = share.find('.fbp-share-url-text')[0];
         value.focus();
@@ -35,7 +33,9 @@ $(document).off('click.fbpShareUrlCopy', '.fbp-share-url-copy').on('click.fbpSha
         const selection = window.getSelection();
         selection.removeAllRanges();
         selection.addRange(range);
-        status.addClass('is-error').text('URLを選択しました。手動でコピーしてください。');
+        button.find('.material-symbols-outlined').text('content_copy');
+        button.attr('title', 'URLを選択しました。手動でコピーしてください。').attr('aria-label', 'URLを選択しました。手動でコピーしてください。');
+        status.text('URLを選択しました。手動でコピーしてください。');
     }
 });
 {/literal}</script>
@@ -43,7 +43,6 @@ $(document).off('click.fbpShareUrlCopy', '.fbp-share-url-copy').on('click.fbpSha
 <p class="fbp-share-url-help">{$share_url_help|escape}</p>
 <div class="fbp-share-url-control">
 <a class="fbp-share-url-text" href="{$share_url|escape}" target="_blank" rel="noopener" title="{$share_url_open_label|escape}" aria-label="{$share_url_open_label|escape}（新しいタブで開く）">{$share_url|escape}</a>
-<button type="button" class="fbp-share-url-copy" data-copy="{$share_url|escape}" aria-label="URLをコピー" title="URLをコピー"><span class="material-symbols-outlined" aria-hidden="true">content_copy</span></button>
+<button type="button" class="fbp-share-url-copy" data-copy="{$share_url|escape}" aria-label="URLをコピー" title="URLをコピー"><span class="material-symbols-outlined" aria-hidden="true">content_copy</span><span class="fbp-share-url-status" role="status" aria-live="polite"></span></button>
 </div>
-<div class="fbp-share-url-footer"><span class="fbp-share-url-status" role="status" aria-live="polite"></span></div>
 </div>
