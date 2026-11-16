@@ -70,35 +70,46 @@ final class PptxToPdf
                 throw new RuntimeException('Cannot prepare conversion profile.');
             }
             $profileUri = 'file://' . implode('/', array_map('rawurlencode', explode('/', $work . '/profile')));
-            // Array arguments bypass the shell. The uploaded filename never becomes an option.
-            // Do not stat system binaries: PHP open_basedir may allow only the app directory.
-            $process = proc_open([
-                '/usr/bin/timeout', '--signal=TERM', '--kill-after=5s', $timeout . 's',
-                '/usr/bin/libreoffice', '-env:UserInstallation=' . $profileUri,
-                '--headless', '--nologo', '--nodefault', '--norestore',
-                '--convert-to', 'pdf:impress_pdf_Export', '--outdir', $work, $work . '/input.pptx',
-            ], [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, $work, [
-                'PATH' => '/usr/bin:/bin', 'HOME' => $work, 'TMPDIR' => $work,
-                'LANG' => 'C.UTF-8', 'SAL_USE_VCLPLUGIN' => 'svp',
-            ]);
-            if (!is_resource($process)) throw new RuntimeException('Cannot start PPTX conversion engine.');
-            fclose($pipes[0]); unset($pipes[0]);
-            stream_set_blocking($pipes[1], false);
-            stream_set_blocking($pipes[2], false);
-            $diagnosticBytes = 0;
-            $deadline = microtime(true) + $timeout + 7;
-            do {
-                foreach ($pipes as $pipe) $diagnosticBytes += strlen(stream_get_contents($pipe));
-                if ($diagnosticBytes > 262144) throw new RuntimeException('PPTX conversion exceeded diagnostic limit.');
-                $status = proc_get_status($process);
-                if (!$status['running']) break;
-                if (microtime(true) > $deadline) throw new RuntimeException('PPTX conversion timed out.');
-                usleep(20000);
-            } while (true);
-            foreach ($pipes as $pipe) fclose($pipe);
-            $pipes = [];
-            $closed = proc_close($process); $process = null;
-            $exit = $status['exitcode'] >= 0 ? $status['exitcode'] : $closed;
+            // oosplash probes hard-coded /tmp pipes even when TMPDIR is set.
+            // Run the engine directly; its relative socket stays in this workspace
+            // and avoids the Unix-domain socket path-length limit for long temp paths.
+            $deadline = microtime(true) + $timeout;
+            for ($attempt = 0; $attempt < 2; $attempt++) {
+                $remaining = max(1, (int)ceil($deadline - microtime(true)));
+                // Array arguments bypass the shell. The uploaded filename never becomes an option.
+                // Do not stat system binaries: PHP open_basedir may allow only the app directory.
+                $process = proc_open([
+                    '/usr/bin/timeout', '--signal=TERM', '--kill-after=5s', $remaining . 's',
+                    '/usr/lib/libreoffice/program/soffice.bin', '-env:UserInstallation=' . $profileUri,
+                    '-env:OSL_SOCKET_PATH=.',
+                    '--headless', '--nologo', '--nodefault', '--norestore',
+                    '--convert-to', 'pdf:impress_pdf_Export', '--outdir', $work, $work . '/input.pptx',
+                ], [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes, $work, [
+                    'PATH' => '/usr/bin:/bin', 'HOME' => $work, 'TMPDIR' => $work,
+                    'XDG_CACHE_HOME' => $work . '/cache', 'XDG_CONFIG_HOME' => $work . '/config',
+                    'LANG' => 'C.UTF-8', 'SAL_USE_VCLPLUGIN' => 'svp',
+                ]);
+                if (!is_resource($process)) throw new RuntimeException('Cannot start PPTX conversion engine.');
+                fclose($pipes[0]); unset($pipes[0]);
+                stream_set_blocking($pipes[1], false);
+                stream_set_blocking($pipes[2], false);
+                $diagnosticBytes = 0;
+                do {
+                    foreach ($pipes as $pipe) $diagnosticBytes += strlen(stream_get_contents($pipe));
+                    if ($diagnosticBytes > 262144) throw new RuntimeException('PPTX conversion exceeded diagnostic limit.');
+                    $status = proc_get_status($process);
+                    if (!$status['running']) break;
+                    if (microtime(true) > $deadline + 7) throw new RuntimeException('PPTX conversion timed out.');
+                    usleep(20000);
+                } while (true);
+                foreach ($pipes as $pipe) fclose($pipe);
+                $pipes = [];
+                $closed = proc_close($process); $process = null;
+                $exit = $status['exitcode'] >= 0 ? $status['exitcode'] : $closed;
+                // Direct soffice.bin requests one restart after first-run profile setup.
+                if ($exit !== 81 || $attempt !== 0) break;
+                if (microtime(true) >= $deadline) throw new RuntimeException('PPTX conversion timed out.');
+            }
             if ($exit === 124 || $exit === 137) throw new RuntimeException('PPTX conversion timed out.');
             if ($exit === 127) throw new RuntimeException('LibreOffice or GNU timeout is not installed.');
             if ($exit !== 0) throw new RuntimeException('PPTX conversion engine failed.');
