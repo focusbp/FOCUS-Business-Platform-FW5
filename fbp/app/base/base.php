@@ -96,19 +96,21 @@ class base {
 			"no_items" => $ctl->t("base.empty_state.no_items"),
 		]);
 		
-		// 初期のメールテンプレートを入れる
-		$ffm_email_format = $ctl->db("email_format", "email_format");
-		$email_format_list = $ffm_email_format->select("key", "account_created");
-		if(count($email_format_list) ==0){
-			$txt = file_get_contents(dirname(__FILE__) . "/Templates/default_email.tpl");
-			$arr = array();
-			$arr["key"] = "account_created";
-			$arr["template_name"] = "Account Created";
-			$arr["subject"] = "Your New Account Details";
-			$arr["body"] = $txt;
-			$ffm_email_format->insert($arr);
+		// Release-owned templates are initialized only in the development environment.
+		if ((string) ($setting["force_testmode"] ?? "") === "1") {
+			$ffm_email_format = $ctl->db("email_format", "email_format");
+			$email_format_list = $ffm_email_format->select("key", "account_created");
+			if(count($email_format_list) ==0){
+				$txt = file_get_contents(dirname(__FILE__) . "/Templates/default_email.tpl");
+				$arr = array();
+				$arr["key"] = "account_created";
+				$arr["template_name"] = "Account Created";
+				$arr["subject"] = "Your New Account Details";
+				$arr["body"] = $txt;
+				$ffm_email_format->insert($arr);
+			}
 		}
-		
+
 		// htaccess
 		if(!is_file(dirname(__FILE__) . "/../../../.htaccess")){
 			$ctl->ajax("setting","update");
