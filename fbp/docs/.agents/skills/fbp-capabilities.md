@@ -50,7 +50,7 @@
 | 共通frameworkのコード変更 | 開発者対応 | 顧客タスクで直接変更不可。既存コードの読取り・同期は別 | local-auto-task |
 | auto-taskの共用ソース環境確認 | 条件付き | appcodeと編集元名が異なる場合も管理APIのcode_dir・source_dir・test_dirで既存環境と作成後を確認。解決失敗時は推測して作成しない | local-auto-task、scripts/docs/auto-task-shared-project.md、tests/test_project_setup_resume.py（10件検証済み） |
 | auto-taskの開始判定 | 条件付き | アカウント台帳の公開開始フラグで判定。新規は案内メール送信完了、既存アカウントは紐付け変更時にON。登録日・送信日時から推測しない | local-auto-task、app-soshikikaikaku/docs/account-public-start.md |
-| persistent_jobによる分割・長期実行 | 条件付き | Task API/定数は本番反映確認済みで、対象環境のready成功が必要。作成AIは生成・構文検査まで、ホスト親処理が保護付き実行テスト→登録を担当し、sandbox内からの二重Codex起動を拒否する。全体3・同一app1・Codex再呼出しジョブ1。報告は既定30分・時間のみ・0で停止。本番DBの保存成功応答で成功、正常系の再取得照合不要。テストはテストDBに限定。Task 5075のCodex調査・テストDB保存で検証済み。完了後は専用ファイルを実削除 | local-persistent-job、scripts/docs/persistent-job.md |
+| persistent_jobによる分割・長期実行 | 条件付き | Task API/定数は本番反映確認済みで、対象環境のready成功が必要。作成AIは生成・構文検査まで、ホスト親処理が保護付き実行テスト→登録を担当し、sandbox内からの二重Codex起動を拒否する。全体3・同一app1・Codex再呼出しジョブ1は専用スロットで制御し、通常auto-task・本番リリースのTask/appcode共有ロックは取得しない。報告は既定30分・時間のみ・0で停止。本番DBの保存成功応答で成功、正常系の再取得照合不要。テストはテストDBに限定。Task 5075のCodex調査・テストDB保存で検証済み。完了後は専用ファイルを実削除 | local-persistent-job、scripts/docs/persistent-job.md |
 
 動画の非対応返信は「申し訳ありませんが、動画の解析（音声の文字起こしを含む）および動画の生成には現在対応していません。」。事前チェックはAUTO_ACTION: replyとQUESTION_RESULT: answeredを出力し、実行承認・TASK_SETTINGS・IMAGE_PROCESSING_REVIEWへ回さない。ツール導入や外部API利用を約束しない。他の非対応は該当する理由を具体的に伝え、必要な場合だけ実現可能な代案を示す。
 
