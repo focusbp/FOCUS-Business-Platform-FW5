@@ -28,4 +28,4 @@
 
 </form>
 
-{if $passkey_url}<div style="clear:both;padding-top:24px;"><a href="{$passkey_url|escape}" style="display:block;text-align:center;padding:12px;border:1px solid #1a5bc4;border-radius:7px;color:#1a5bc4;">パスキーでログイン</a></div>{/if}
+{if $passkey_url}<div style="clear:both;padding-top:24px;"><p class="passkey-migration-notice">2026年11月末でパスキーに完全移行します。今月中にパスキー登録とログイン確認をお願いします。</p><a href="{$passkey_url|escape}" style="display:block;text-align:center;padding:12px;border:1px solid #1a5bc4;border-radius:7px;color:#1a5bc4;">パスキーでログイン</a></div>{/if}
