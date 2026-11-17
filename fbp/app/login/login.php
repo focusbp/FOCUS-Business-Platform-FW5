@@ -16,7 +16,7 @@ class login {
 
 	function __construct(Controller $ctl) {
 		$ctl->set_check_login(false);
-		$ctl->assign("passkey_url", PasskeyConfig::available($ctl) ? $ctl->get_APP_URL("passkey", "page") : "");
+		$ctl->assign("passkey_url", PasskeyConfig::available($ctl) ? $ctl->get_APP_URL("passkey", "page", ["view"=>"login"]) : "");
 		$this->passkey_repository = new PasskeyRepository($ctl);
         $this->ffm_user = $this->passkey_repository->users;
 		$this->ffm_setting = $ctl->db("setting", "setting");
@@ -542,7 +542,7 @@ class login {
         $identity = $repository->identity((int)$user["id"]);
         // Authentication method comes only from a server-side caller, never request parameters.
         if ((int)($identity['password_login_disabled'] ?? 0) === 1 && $authentication !== 'passkey' && !$codeLogin) {
-            $ctl->res_redirect($ctl->get_APP_URL('passkey', 'page'));
+            $ctl->res_redirect($ctl->get_APP_URL('passkey', 'page', ['view'=>'login']));
             return;
         }
         if ($this->defer_login_to_app_guard($ctl, $user, $login_id, $password)) return;
