@@ -15,7 +15,7 @@
 
 ## 機能一覧
 
-ローカル管理のプラン取得は `project_plan.sh` を使用する。SAMPLE（アカウントsample=1）を最優先し、次に料金管理のFREE／ASSIST／BUSINESS、それ以外をORIGINALとする。SAMPLEはFREE等と同じサービス上限対象。取得スクリプトとサンプル画面は検証済みだが、サンプル定義の本番反映・auto-taskの上限自動照合は未実施。根拠: local-fbp-account-management、scripts/docs/project-plan.md。
+ローカル管理のプラン取得は `project_plan.sh` を使用する。SAMPLE（アカウントsample=1）を最優先し、次に料金管理のFREE／ASSIST／BUSINESS、それ以外をORIGINALとする。SAMPLEはFREE等と同じサービス上限対象。取得スクリプトは検証済み、サンプル画面・定義は2026-11-18に本番反映済み。auto-taskの上限自動照合は未実施。根拠: local-fbp-account-management、scripts/docs/project-plan.md。
 
 | 機能・依頼 | 区分 | 範囲・条件／非対応との境界 | 根拠Skill |
 | --- | --- | --- | --- |
