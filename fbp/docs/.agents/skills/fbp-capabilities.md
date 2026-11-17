@@ -15,7 +15,7 @@
 
 ## 機能一覧
 
-ローカル管理のプラン取得は `project_plan.sh` を使用する。SAMPLE（アカウントsample=1）を最優先し、次に料金管理のFREE／ASSIST／BUSINESS、それ以外をORIGINALとする。SAMPLEはFREE等と同じサービス上限対象。取得スクリプトは検証済み、サンプル画面・定義は2026-11-18に本番反映済み。auto-taskの上限自動照合は未実施。根拠: local-fbp-account-management、scripts/docs/project-plan.md。
+ローカル管理のプラン取得は `project_plan.sh` を使用する。SAMPLE（アカウントsample=1）を最優先し、次に料金管理のFREE／ASSIST／BUSINESS、それ以外をORIGINALとする。SAMPLEはFREE等と同じサービス上限対象。取得スクリプトは検証済み、サンプル画面・定義は2026-11-18に本番反映済み。auto-taskはcheck/execで最新プランとSkillのサービス上限をプロンプトへ渡し、現在有効な要件をAIが文脈で照合する。1ファイル上限500MB（設定値500MiB）、超過はOriginal・独自サーバー運用の相談案内。ORIGINALは共通上限の対象外。根拠: local-auto-task/references/service-level.md、local-fbp-account-management、scripts/docs/project-plan.md。
 
 | 機能・依頼 | 区分 | 範囲・条件／非対応との境界 | 根拠Skill |
 | --- | --- | --- | --- |
