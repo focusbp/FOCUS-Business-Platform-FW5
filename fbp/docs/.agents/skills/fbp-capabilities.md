@@ -48,6 +48,7 @@
 | 共通frameworkのコード変更 | 開発者対応 | 顧客タスクで直接変更不可。既存コードの読取り・同期は別 | local-auto-task |
 | auto-taskの共用ソース環境確認 | 条件付き | appcodeと編集元名が異なる場合も管理APIのcode_dir・source_dir・test_dirで既存環境と作成後を確認。解決失敗時は推測して作成しない | local-auto-task、scripts/docs/auto-task-shared-project.md、tests/test_project_setup_resume.py（10件検証済み） |
 | auto-taskの開始判定 | 条件付き | アカウント台帳の公開開始フラグで判定。新規は案内メール送信完了、既存アカウントは紐付け変更時にON。登録日・送信日時から推測しない | local-auto-task、app-soshikikaikaku/docs/account-public-start.md |
+| persistent_jobによる分割・長期実行 | 開発者対応（設計・入口のみ） | 毎分scan接続と専用Skillを用意。runtime、起動・停止・再開・保存・削除、Task状態/APIは未実装。本番ジョブは本番DBの保存成功応答で成功確定、通常の再取得照合不要。テストはテストDBに限定。運用開始済みと判断しない | local-persistent-job、scripts/docs/persistent-job.md |
 
 動画の非対応返信は「申し訳ありませんが、動画の解析（音声の文字起こしを含む）および動画の生成には現在対応していません。」。事前チェックはAUTO_ACTION: replyとQUESTION_RESULT: answeredを出力し、実行承認・TASK_SETTINGS・IMAGE_PROCESSING_REVIEWへ回さない。ツール導入や外部API利用を約束しない。他の非対応は該当する理由を具体的に伝え、必要な場合だけ実現可能な代案を示す。
 
