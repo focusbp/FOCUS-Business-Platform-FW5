@@ -48,10 +48,11 @@ Developer Modeでも、web側CLIの `db_tables_add`／`db_tables_edit` でExcel�
 本番→テストの自動同期は廃止。ノート追加CLIは本番定義を取り込まない。差分移行はサポートタスクで明示された範囲だけ扱う。定義を含むリリースはテスト→本番であり、修正したテスト定義を反映する。専用取り込みコマンドの検証とHTTP／汎用app_callからの取込み拒否は維持する。
 
 ## bulk execution safety
+- `<code_dir>` はproduction管理APIで対象appcodeから解決した編集元コードを使う。sandboxはそのcode_dirの領域全体を許可する。同じcode_dir内の引継ぎ元Taskを参照・更新できるが、通常の作業は自分のTask領域に置き、他Taskの更新は引継ぎに必要な範囲に限定する。
 - Task共通領域の `time.json` と `.time.lock` は親処理の実行時間記録用。CLI作業で上書き・削除しない。
-- このローカル環境のCLI作業用スクリプト・入力JSON・一時生成物は `~/work/tasks/<task id>/` に置く。`<task id>` は対象Taskの実IDを使い、Task IDのない対話作業は `~/work/tasks/interactive/<作業名>/` に分ける。作業場所のためだけにTaskを新規作成しない。
+- このローカル環境のCLI作業用スクリプト・入力JSON・一時生成物は `~/work/tasks/<code_dir>/<task id>/` に置く。`<task id>` は対象Taskの実IDを使い、Task IDのない対話作業は `~/work/tasks/<code_dir>/interactive/<作業名>/` に分ける。作業場所のためだけにTaskを新規作成しない。
 - 長い複合コマンドを `bash -lc '...'` に多重クォートして実行しない（特に `php -r` / ヒアドキュメント混在を禁止）。
-- 一括処理は上記の作業場所に実行スクリプトを作成し、`set -euo pipefail` 付きで `bash ~/work/tasks/<task id>/<script>.sh` のように実行する。CLI自体の実行ディレクトリは対象の `web` 側とし、スクリプトの保管先と区別する。
+- 一括処理は上記の作業場所に実行スクリプトを作成し、`set -euo pipefail` 付きで `bash ~/work/tasks/<code_dir>/<task id>/<script>.sh` のように実行する。CLI自体の実行ディレクトリは対象の `web` 側とし、スクリプトの保管先と区別する。
 - JSON は各操作ごとに個別で組み立てる（`db_tables_add`, `db_fields_add`, `screen_fields_add`, `data_add` を混在させた巨大1発JSONを作らない）。
 - 失敗時はその場で停止し、成功済みの確認コマンド（`*_list` / `data_list`）で再開位置を特定してから再実行する。
 
