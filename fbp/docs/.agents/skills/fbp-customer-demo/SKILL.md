@@ -154,14 +154,14 @@ fields. For new flows check desktop and supported mobile; for existing flows che
 directly; do not change their handlers to `show_pdf()` without also changing the entry
 to Ajax dialog display. CLI success alone does not complete verification of a new or changed browser flow. If required browser verification cannot run, report the reason and the unverified scope.
 
-Run these after the installer:
+Run these after the installer. Set CODEX_TASK_WORKSPACE through the local task workspace helper first; it points to the verified code_dir/task ID directory. Keep the CLI working directory in the web runtime.
 
 ```bash
 php fbp/cli.php app_call --json='{"class":"customers_original_management","function":"run"}'
 php fbp/cli.php app_check --json='{"class":"customers_original_management","function":"run","checks":[{"path":"response_json.work_area.html","contains":"original_screen_toolbar original_screen_toolbar_end","label":"toolbar"},{"path":"response_json.work_area.html","contains":"search_box original_search_panel","label":"search panel"},{"path":"response_json.work_area.html","contains":"original_screen_table","label":"list table"},{"path":"response_json.work_area.html","contains":"Customers: 3","label":"seed count"}]}'
 php fbp/cli.php data_list --json='{"table":"customers","max":20}'
-php fbp/cli.php app_call --json='{"class":"customers_csv","function":"download","output_file":"/tmp/customers.csv"}'
-php fbp/cli.php app_call --json='{"class":"customers_pdf","function":"list_pdf","output_file":"/tmp/customers.pdf"}'
+php fbp/cli.php app_call --json="{\"class\":\"customers_csv\",\"function\":\"download\",\"output_file\":\"${CODEX_TASK_WORKSPACE:?}/customers.csv\"}"
+php fbp/cli.php app_call --json="{\"class\":\"customers_pdf\",\"function\":\"list_pdf\",\"output_file\":\"${CODEX_TASK_WORKSPACE:?}/customers.pdf\"}"
 ```
 
 Check:
@@ -172,7 +172,7 @@ Check:
   `search_box original_search_panel`, and `original_screen_table`.
 - Edit Save does not return `Customer not found.` and the list still shows the
   three seed rows.
-- `/tmp/customers.csv` starts with the fixed CSV header and has no JSON mixed in.
-- `/tmp/customers.pdf` starts with `%PDF-`; use `pdftotext` if available.
+- `$CODEX_TASK_WORKSPACE/customers.csv` starts with the fixed CSV header and has no JSON mixed in.
+- `$CODEX_TASK_WORKSPACE/customers.pdf` starts with `%PDF-`; use `pdftotext` if available.
 
 If a check fails, fix the failing stage before adding new behavior.

@@ -39,7 +39,7 @@ The wrapper also exports the current rotated test-gateway Basic-auth values as
 stable for the lifetime of the browser process.
 Do not run Playwright from `~/` in a way that creates default output directories such as
 `~/test-results` or `~/playwright-report`. Put temporary scripts and artifacts under
-`~/scripts/tmp/...`, and put retained screenshots under `/home/nakama/Screenshot/<appcode>/`.
+`$CODEX_TASK_WORKSPACE/playwright/` for task work (`~/work/tasks/<code_dir>/<task id>/playwright/`). Non-task work uses `~/scripts/tmp/...`; retained non-task screenshots use `/home/nakama/Screenshot/<appcode>/`.
 
 Write scripts with:
 
@@ -75,7 +75,7 @@ const browser = await chromium.launch({
 5. For required images, use `page.screenshot({ path, fullPage: true })` by default. Operation-only checks need no screenshot.
 6. Always print relevant DOM metrics for layout bugs, such as rendered width, `data-*`
    attributes, `scrollWidth`, and `clientWidth`.
-7. Keep any temporary Playwright script or test output under `~/scripts/tmp/...`, never under
+7. Keep task scripts and test output under `$CODEX_TASK_WORKSPACE/playwright/`; non-task work uses `~/scripts/tmp/...`, never under
    `~/` directly.
 8. Remove temporary Playwright scripts after use unless the user explicitly asks to keep them.
 9. Run related checks in one browser session and reuse the authenticated page. Do not repeat
@@ -159,7 +159,10 @@ const { chromium } = require("playwright");
 
 (async () => {
   const appcode = process.env.APP_CODE;
-  const out = `/home/nakama/Screenshot/${appcode}/check.png`;
+  const taskWorkspace = process.env.CODEX_TASK_WORKSPACE;
+  const outDir = taskWorkspace ? `${taskWorkspace}/screenshots` : `/home/nakama/Screenshot/${appcode}`;
+  require("fs").mkdirSync(outDir, { recursive: true });
+  const out = `${outDir}/check.png`;
   const testUrl = process.env.APP_TEST_URL;
   const loginUrl = process.env.APP_ONETIMECODE_LOGIN_URL;
   const code = process.env.APP_ONETIMECODE;
