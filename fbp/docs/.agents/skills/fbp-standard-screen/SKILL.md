@@ -27,16 +27,22 @@ description: Build, maintain, or adjust FBP Standard Screen note management usin
 - 回答に依存する変更は待ち、依存しない設計・実装・調査は進める。差があることだけでタスク全体を一律に停止せず、影響する機能と残作業を明示する。
 - メディアの旧経路は `fbp-media` の「旧経路と停止条件」に従う。標準経路の存在と、今回の利用者による識別子の入手・取得可否を分け、理論上の経路だけで停止しない。明示要件や具体的に取得可能な迂回経路の扱いは維持する。
 
+## 標準画面の設定確認と完了条件
+
+- 標準機能だけで構成するノートの作成・表示項目変更は、環境の読取り専用チェッカーでノート設定と画面別の項目・順番・選択肢を取得し、依頼内容と照合して完了する。ローカルの入口は `~/scripts/standard_screen_check.sh --app <appcode> --note <ノート名・テーブル名・ID> --json`。仕様はscriptsの `docs/standard-screen-check.md`。
+- チェッカーが取得・検査を完了し `ok=true`、機械検査に `passed=true` があり、警告の意図と依頼との一致を確認する。`passed=true`だけで業務上の項目選択・順番が正しいとは判定しない。取得失敗・曖昧なノート・設定エラーを成功として扱わない。
+- この範囲では追加の `app_call` / `app_check`、定義再取得、データ読戻し、CRUD・検索操作、Playwright・撮影は不要。完了報告は「設定確認済み」とし、画面操作・保存・検索の動作確認済みとは報告しない。
+- 独自クラス・動的なフォーム制御・認可・保存処理・副作用や表示不具合を変更した場合、チェッカーだけではその変更を検証できない。変更した独自処理だけに必要な確認を追加する。明示された操作確認・撮影依頼、チェッカー／ビルダー自体の開発時検証、本番反映の許可と手順は別に扱う。
+- 旧 `cli.php standard_screen_check` とfbp_cli_check.sh経由の同名コマンドは廃止。新チェッカーはアプリを起動せず設定ファイルを共有読取りし、業務レコードを読まず、設定を更新しない。
+
 ## 専用スクリプトによる新規作成
 
-- 検証済みのノート作成スクリプトが環境にある場合、対応範囲内の新規標準画面はそのスクリプトを優先する。このローカル環境の入口・入力仕様は `../local-main.md` の「標準画面の専用構築」を参照する。
-- 要望を定義JSONに落とし込み、スクリプトが **作成前の厳格チェック → ノート・項目・選択肢・画面設定の登録 → 指定済みsampleで3件投入 → 検索画面（子ノートはサイドパネル）のスクリーンショット1枚** を行う。入力は実行時に推測せず、明示値と固定の既定値で決める。
-- サンプルが必要なら作成JSONの各項目に `sample` を指定する。共通名（name/company/email/address/postal_code）、`{"value":値}`、`{"values":[3値]}`、日付・日時の `{"relative_days":[7,14,21]}` を使う。作成時の項目定義を再利用し、別途DB定義取得・投入JSON作成・投入コマンド・ソース読込みは行わない。全項目でsample省略なら定義だけ作成する。
-- この専用フローで成功した新規作成では、作成後の定義照合、`standard_screen_check`、`app_call` / `app_check`、データ読戻し、CRUD・検索操作テスト、追加のブラウザー検証を行わない。この節は以下の通常 workflow / constraints と DB・CLI・Playwright Skill の通常検証手順に優先する。
-- 登録処理の成功応答と撮影完了は実行制御として扱う。スクリプト失敗を無視して完了にしない。撮影のみの失敗なら専用の再撮影入口を使う。
-- スクリーンショットは検索・一覧画面、子ノートは既存親レコードのサイドパネルを1枚取得する。ビルダー内のsample投入後に、別途データ投入や複数端末確認を追加しない。保存・検索操作を検証済みとは報告しない。
-- 子ノートは定義JSONの `note.parent` で既存の親ノート名を指定し、`screens.list_on_side` を設定する。撮影・子サンプル3件の紐付け先になる既存親レコードIDは実行オプションで指定する。親定義・既存データは変更せず、親ID項目はframeworkの自動追加に任せる。
-- 未対応の要件を削ってこのフローへ寄せない。既存ノート変更、独自処理、未対応パターンは通常 workflow を使う。スクリプト自体の開発・修正時は、入力拒否・登録結果・対応パターンを別途検証する。
+- 対応範囲内の新規標準画面は環境のノート作成スクリプトを優先する。ローカルの入口・入力仕様は `../local-main.md` の「標準画面の専用構築」を参照する。
+- 定義JSONから **作成前チェック → ノート・項目・選択肢・画面設定の登録 → 指定したsampleがあれば3件投入 → チェッカーによる設定取得・機械検査と表示項目順の照合** を行う。入力は明示値と既定値で決め、撮影は実行しない。
+- sampleは同じ作成JSONに共通名（name/company/email/address/postal_code）、`{"value":値}`、`{"values":[3値]}`、日付・日時の `{"relative_days":[7,14,21]}` で指定する。全項目で省略なら定義だけ作成する。別の定義取得・投入JSON・独立した投入を重ねない。
+- 完了条件は前節を正本とする。ビルダーの返却する `check` / `check_report` を使い、同じチェッカーを別途再実行しない。登録成功応答は維持し、チェック失敗だけなら `--check-run <receipt.json>` で検査のみ再実行する。登録途中の失敗はreceiptを確認して復旧し、盲目的に再投入しない。
+- 子ノートは `note.parent` と `screens.list_on_side` を指定する。子サンプルの紐付け先になる既存親レコードIDを実行オプションで指定する。親定義・既存データは変更せず、親ID項目はframeworkの自動追加に任せる。
+- 既存ノート変更・独自処理・未対応パターンを要件から削ってビルダーへ寄せない。通常workflowで実装し、標準設定の確認には前節を適用する。
 
 ## workflow
 
@@ -51,7 +57,7 @@ description: Build, maintain, or adjust FBP Standard Screen note management usin
    標準フォームを維持して追加・編集・削除の実行処理を上書きする場合は、ノートの `standard_screen_class` を指定する。推奨名は `<tb_name>_customize_standard_screen`。実装する関数と担当範囲は [標準画面カスタマイズ](references/customize-standard-screen.md) と、リンク先のadd/edit/delete別テンプレートを使う。
    フォームの表示準備は同じクラスの `prepare_add/prepare_edit(Controller $ctl, StandardScreenForm $form): void` で行う。選択肢・表示名・初期値・非表示・読取り専用をこの描画だけに適用する。[prepare関数の契約とテンプレート](references/customize-standard-screen.md#フォームの表示準備)を使い、表示制御を保存時の権限・値検証の代わりにしない。
 7. 標準の編集・削除導線を独自化する場合は、対象 screen の `screen_fields` を空にして標準アイコンを非表示にし、`db_additionals` の行ボタンで専用クラス・専用ダイアログを実装する。
-8. `screen_fields` 登録・変更後は必ず `standard_screen_check` を実行し、フラグの選択式化、内部項目/ raw ID の露出、空の画面定義を確認する。
+8. `screen_fields` 登録・変更後は前節のチェッカーで設定・項目・順番を確認する。ビルダーの検査済み結果がある場合は再実行しない。
 
 ## 保存・削除の拡張点を判断するとき
 
@@ -69,7 +75,7 @@ description: Build, maintain, or adjust FBP Standard Screen note management usin
 - 上部ボタンは `db_additionals` の `place=0` で追加する。行ボタン・サイドパネルボタン（`place=1/2/3`）は設定不可。上部ボタンにレコードIDや未保存フォーム値は自動送信しない。
 - 親を持たない共有設定用ノートが対象。ユーザー別・親別に１件持つ用途には使わない。親ノート設定、２件以上の既存データ、既存の行・サイドパネルボタンがある場合は、このパターンへの変更が拒否される。
 - 標準画面の追加・複製・削除等の直接呼出しは拒否され、同時初回保存はFFMの排他ロック内で１件に保たれる。これは標準画面の制約であり、独自コード、汎用DB API、CLI `data_*` の直接書込みまで制約するものではない。これらから書き込む実装でも１件を維持すること。２件以上を検出した画面は編集・保存を止める。
-- 設定後は `standard_screen_check`、`db_exe/page`、`db_exe/save_single_exe` と `data_list` で確認する。初回保存・更新・入力エラー・保存通知・上部ボタンを確認し、検証で設定レコードを意図せず残さない。
+- 単一レコードの設定・項目だけの変更は上記の完了条件を使う。保存処理や通知・ボタン等の実装を変更した場合だけ、その処理の代表確認を追加し、検証で設定レコードを意図せず残さない。
 
 ## default screen_fields policy
 - ユーザーから項目指定がない場合、Standard Screen の `screen_fields` は次の方針で設定する。
@@ -92,7 +98,7 @@ description: Build, maintain, or adjust FBP Standard Screen note management usin
 - CLI は `db_tables_edit --json='{"id":<ノート定義ID>,"show_id":1,"identifier_prefix":"fbpdev"}'`。レコードIDは実際の数値をそのまま表示し、ゼロ埋めしない。接頭辞を空文字にすると従来の数値IDへ戻り、`show_id=0` なら接頭辞があっても表示しない。
 - 対象は標準画面のメイン一覧「検索＋一覧」「マニュアルソート」。IDは `screen_fields` の通常項目ではないため、`db_fields` / `screen_fields` にIDを追加しない。検索・入力・削除確認・子一覧・カレンダーにはこの表示設定を適用しない。
 - 表示書式はframework、接頭辞の意味やID指定時の情報取得手順は用途別Skillで管理する。接頭辞の設定だけではAPIやスクリプトの呼出し機能は追加されない。
-- 保存後は `db_tables_list` で設定を読み戻し、`db_exe/rows` とブラウザーで表示を確認する。`db_exe/page` のCLI応答だけでは、後続Ajaxで取得する一覧行まで検証できない。配布時は対応frameworkとノート設定の両方を反映する。
+- 接頭辞・表示設定だけの変更は、チェッカーの `note.settings.show_id` と `identifier_prefix` を依頼と照合する。表示ロジック自体を変更した場合や表示不具合の調査では、実際の一覧行まで確認する。配布時は対応frameworkとノート設定の両方を反映する。
 
 ## responsive list layout
 
@@ -115,7 +121,7 @@ description: Build, maintain, or adjust FBP Standard Screen note management usin
 - テキスト、数値、選択肢などは値を1つ設定する。`date` / `datetime` は開始・終了を別々に設定する。未設定は初期値なし。
 - 選択肢の値はラベルをハードコードせず、対象の `constant_array` のキーを設定する。
 - ログインユーザー、所属、ロールなどで閲覧範囲を制限する用途には使わない。利用者が解除できない条件は `<ノート名>_visibility_filter` に置く。
-- 設定後は `screen_fields_list` で `search_default_value`（日付・日時は `search_default_from` / `search_default_to`）を確認し、新しいセッションで `db_exe/page` を呼んで初期選択を確認する。続けて `standard_screen_check` を実行する。
+- 検索初期値の設定変更はチェッカーの `search_defaults` で確認する。独自の初期化処理を変更した場合だけ新規セッションの処理確認を追加する。
 
 ## app-owned search extensions
 
@@ -158,8 +164,8 @@ description: Build, maintain, or adjust FBP Standard Screen note management usin
 - `constant_array` にある選択肢ラベル（status/type等）はハードコードしない。`$ctl->get_constant_array()` または `fields_view_direct` でフレームワーク定義を参照する。
 - URL生成は `$ctl->get_APP_URL()` を必須とし、`app.php?class=...` や `$_SERVER` 連結での直書きURLを増やさない。
 - `screen_fields` 登録前に、日付項目のDB型が `date` になっていることを確認する。
-- `screen_fields` 登録後は、`standard_screen_check --json='{"tb_name":"<tb_name>"}'` を実行し、必要に応じて `db_exe/page` / `rows` やブラウザ確認も行う。有効状態項目が選択式になっていること、`sort` が通常の list/add/edit/search に出ていないこと、Manual Sort が必要なテーブルでは `list_type=Manual Sort` になっていることを確認する。
-- `standard_screen_check` の `empty_screen_fields` は警告扱い。意図的に空にしている画面なら無視してよいが、必要な `screen_fields` の登録漏れがないか確認する。
+- 表示項目登録後の確認は「標準画面の設定確認と完了条件」に従う。有効状態の選択式、内部sortの非露出、Manual Sortの一覧方式を検査結果と設定情報で確認する。
+- チェッカーの `empty_screen_fields` は警告扱い。意図的に空にしている画面なら無視してよいが、必要な `screen_fields` の登録漏れがないか確認する。
 - PDF生成は `fbp-pdf` の管理側標準に従う。`db_additionals` ボタン → `show_multi_dialog()` → ダイアログ内 `download-link` でPOST → `create_pdfmaker()` で帳票を組み立て → `download_pdf()` で返す。新規に `show_pdf()` のテンプレート方式を選ばず、`ajax-link` でPDF本体を取得しない。
 
 ## スプレッドシート

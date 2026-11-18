@@ -87,7 +87,7 @@ php fbp/docs/.agents/skills/fbp-app-samples/scripts/test_simple_ec_shop.php --te
 モックでの銀行振込／Square受付・カード・通知、重複決済防止、返金・定期課金、FFM並行実行を検証する。
 外部サービスへ接続せず、メールを配送しない。
 
-実環境では `db_schema`／`standard_screen_check` と公開・管理画面を確認する。
+実環境では `db_schema`／`standard_screen_check.sh --app <appcode> --note <ノート> --json` と公開・管理画面を確認する。
 確認済みシナリオ：初回の運用設定保存、種別に応じたフォーム、物販のゲスト銀行振込受付、
 イベントだけへの選択肢変更、未使用商品の非公開化・直接受付拒否、定期購入の入力欄追加。
 本番Squareの実売上・返金・定期課金やSMTP到達は導入先ごとに確認する。

@@ -25,9 +25,9 @@ description: Manage the FBP DB lifecycle, schema and screen reflection, and appl
 - FFMの排他は複数DB更新のロールバックやクラッシュ時の一括原子性を提供しない。現行のロック待機にも自動タイムアウトを期待しない。必要な要件を満たせない場合は、アプリ独自ロックを追加せず共通FFM側の対応として検討する。
 - 排他に関わる変更では、別プロセスの同時実行で待ち合い・二重登録・更新取りこぼしがないことを確認する。逐次テストだけで排他の検証完了としない。
 
-## 専用構築フローの検証例外
+## 標準画面の設定確認
 
-`fbp-standard-screen` の「専用スクリプトによる新規作成」に該当する場合は、そのフローを優先する。作成前チェックと構築、検索画面（子ノートはサイドパネル）のスクリーンショット1枚で完了し、本Skillの通常の初動・作成後確認を重ねない。スクリプトの登録応答による失敗検知は省略しない。既存変更・通常の手作業・本番リリース判断にはこの例外を適用しない。
+標準機能だけのノート作成・表示項目変更の完了条件は `fbp-standard-screen` の「標準画面の設定確認と完了条件」を正本とする。ビルダーのチェッカー結果を依頼と照合し、本Skillの通常の初動・作成後CLI確認を重ねない。独自処理・明示された操作確認・本番リリースの判断にはそれぞれの確認を適用する。
 
 ## workflow
 1. `db_schema` と `db_tables_list` で現状確認。
@@ -51,7 +51,7 @@ description: Manage the FBP DB lifecycle, schema and screen reflection, and appl
 
 ### release verification
 1. テスト環境で `db_schema`、`db_tables_list`、`db_additionals_list` を確認する。
-2. Standard Screenは `standard_screen_check` で意図しない `ERROR` / `WARN` がないことを確認する。
+2. Standard Screenの設定だけの変更は `fbp-standard-screen` の完了条件に従う。独立チェッカーの設定・項目順を照合し、追加CLI・ブラウザー確認を重ねない。
 3. 実データがある変更は `describe` と `data_list` / `getall` で形式更新とデータ保持を確認する。
 4. 本番反映は環境指定の承認済みrelease scriptを使い、反映後に現在の定義とデータ読込を再確認する。
 

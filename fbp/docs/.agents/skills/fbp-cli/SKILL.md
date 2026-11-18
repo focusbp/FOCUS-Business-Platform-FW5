@@ -10,9 +10,9 @@ description: Execute and verify FBP features through cli.php commands including 
 - `app_call` / `app_check` で画面導線を検証したい
 - `db_*` / `data_*` / `cron_list` 等の状態確認をしたい
 
-## 専用構築フローの検証例外
+## 標準画面の設定確認
 
-`fbp-standard-screen` の「専用スクリプトによる新規作成」に該当する場合は、そのフローを優先する。作成前チェックと構築、検索画面（子ノートはサイドパネル）のスクリーンショット1枚で完了し、本Skillの通常の初動・作成後確認を重ねない。スクリプトの登録応答による失敗検知は省略しない。既存変更・通常の手作業・本番リリース判断にはこの例外を適用しない。
+標準機能だけのノート作成・表示項目変更の完了条件は `fbp-standard-screen` の「標準画面の設定確認と完了条件」を正本とする。ビルダーのチェッカー結果を依頼と照合し、本Skillの通常の初動・作成後CLI確認を重ねない。独自処理・明示された操作確認・本番リリースの判断にはそれぞれの確認を適用する。
 
 ## workflow
 1. 既存ノートが特定できる実装探索は、環境にノートからクラス・関数へ辿る参照専用ツールがあれば先に使う。ノート不明で文言やキーワードから探す場合は、環境に定義・設定・コードの横断検索があれば先に使う（ローカル環境は `local-main.md` の `local-fbp-find`）。対象の設定・入口が得られた場合、初動の全件取得や広範囲検索を重ねない。それらで解決できない範囲だけ `db_schema`, `db_tables_list`, `db_additionals_list` を確認。
@@ -35,7 +35,7 @@ description: Execute and verify FBP features through cli.php commands including 
   `php <app-root>/fbp/cli.php data_list --json='{"table":"customers","max":100}'`
 - HMAC API 経由のデータ更新は、環境固有のクライアント設定に従う。
 - `fbp_cli_check.sh`ラッパーがある環境では、JSONを `'{...}'`・`--json='{...}'`・`--json '{...}'` の3形式で渡せる。`app_call` / `app_check` / `method_call` は `<class> <function> [追加JSON]` も利用でき、追加JSONに `post` / `get` / `files` / `output_file` 等を渡す。class/functionは位置引数とJSONで重複指定しない。
-- ラッパーの標準画面検査は `standard_screen_check <tb_name>` または `standard_screen_check --json '{"tb_name":"<tb_name>"}'`。ボタン登録等も `db_additionals_add --json '{...}'` 形式に対応する。ラッパーの`--summary`等はコマンド前へ置く。不正JSON・余分な引数は実行前に停止する。CLI本体を直接呼ぶ場合は以下の`--json`形式を使う。
+- 標準画面検査は独立した `standard_screen_check.sh --app <appcode> --note <ノート> --json` を使う。旧CLIコマンドは廃止。ボタン登録等も `db_additionals_add --json '{...}'` 形式に対応する。ラッパーの`--summary`等はコマンド前へ置く。不正JSON・余分な引数は実行前に停止する。CLI本体を直接呼ぶ場合は以下の`--json`形式を使う。
 - ラッパーで足りない CLI はそのまま透過実行できる:
   `php <app-root>/fbp/cli.php cron_list --json='{"id":1}'`
 
@@ -72,8 +72,8 @@ Developer Modeでも、web側CLIの `db_tables_add`／`db_tables_edit` でExcel�
 - screen_fields の確認:
   `php <app-root>/fbp/cli.php screen_fields_list --json='{"tb_name":"<tb_name>","screen_name":"<screen_name>"}'`
 - 標準画面チェッカー:
-  `php <app-root>/fbp/cli.php standard_screen_check --json='{"tb_name":"<tb_name>"}'`
-  `screen_fields` 登録・変更後に実行し、`ERROR` は修正、`WARN` は意図確認する。
+  `~/scripts/standard_screen_check.sh --app <appcode> --note <ノート名・テーブル名・ID> --json`
+  詳細・完了判断は `fbp-standard-screen` を参照する。
 - 生の CLI でしか表せない場合:
   `php <app-root>/fbp/cli.php <command> --json='{}'`
 

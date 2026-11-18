@@ -38,7 +38,7 @@ php "$SKILL_ROOT/scripts/test_workflow_samples.php" "$EMPTY_SCRATCH_DIR"
 
 単体検証は状態・履歴の一致、権限、理由未入力、古い確認・再送・改ざん、公開フォームのセッション境界、導入の上書き拒否を確認する。
 
-実環境ではPHP構文・manifest読み込み、定義登録直後のデータ0件、既存定義の保持を確認する。`standard_screen_check` の親ノートの未使用 `list_on_side`、受付ノートの未使用 `add` / `delete` / `list_on_side` は意図した警告。ERRORは解消する。
+実環境ではPHP構文・manifest読み込み、定義登録直後のデータ0件、既存定義の保持を確認する。`standard_screen_check.sh --app <appcode> --note <ノート> --json` の親ノートの未使用 `list_on_side`、受付ノートの未使用 `add` / `delete` / `list_on_side` は意図した警告。errorは解消する。
 
 実ブラウザでは [各サンプル](#定番業務機能のサンプル) の操作を確認する。認証済みブラウザを再利用し、公開側のみ別の未ログインセッションにする。スクリーンショットだけで保存成功を判定せず、保存結果も読む。検証結果を案件へ再利用する場合は、対象コード・定義が一致していることと、変更の影響範囲を確認する。
 

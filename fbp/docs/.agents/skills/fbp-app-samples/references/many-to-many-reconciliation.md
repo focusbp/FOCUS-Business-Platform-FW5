@@ -124,7 +124,7 @@ php "$SKILL_ROOT/scripts/test_many_to_many_reconciliation.php" \
 manifest／PHP構文、隔離インストール・上書き拒否、関係計算、保存・解除、権限、
 古い画面、履歴復旧、CSVの符号化・重複・類似明細、実FFMの別プロセス同時実行を検証する。
 
-実環境はテスト用アプリに導入し、各ノートの`standard_screen_check`を行う。
+実環境はテスト用アプリに導入し、各ノートの`standard_screen_check.sh --app <appcode> --note <ノート> --json`を行う。
 内部2ノートの手動追加・編集・削除画面なしは意図した警告。
 画面操作は`scripts/verify_many_to_many_reconciliation.cjs`をPlaywright環境で使う。
 明示したテストURL・実行rootとログイン情報を環境変数で渡す。既存workflowサンプルと同じ

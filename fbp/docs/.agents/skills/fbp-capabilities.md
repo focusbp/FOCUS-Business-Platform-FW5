@@ -23,6 +23,7 @@
 | --- | --- | --- | --- |
 | 公開・独自管理画面のフォーム基本形 | 標準対応／追加開発 | standard-formサンプルで親フォーム・標準部品・エラー・右寄せ操作を一組で再利用。認証・CSRF・業務検証は各入口で実装。Standard Screenの自動CRUDは置換しない | fbp-app-samples、fbp-public-pages、fbp-original-screen、fbp-dialog |
 | DB・ノート・CRUD・検索・一覧 | 標準対応／追加開発 | 新規CRUDはStandard Screenを基本とする。排他はfixed_file_manager。リリース対象設定はテスト変更→リリースで反映 | fbp-db、fbp-standard-screen |
+| 標準画面の設定チェック | ローカルツール | standard_screen_check.shがノート設定・画面別項目順・固定選択肢・エラー／警告を返す。標準設定のみの作成・変更は依頼との照合で完了し、追加CLI・CRUD・Playwright・撮影は不要。独自処理・表示不具合・明示された操作確認は別。旧CLIコマンドは廃止 | fbp-standard-screen、fbp-cli、scripts/docs/standard-screen-check.md |
 | ローカルCLI・ツール作業用ファイル | 運用方針 | レポート・CLI・API一時応答・画像/PDF/ブラウザー生成物をcode_dir／Task ID別に保存。sandboxは対象code_dir全体の書込みを許可。制御用状態と共有ロックは既存の正本を維持し、各Taskの時間記録は変更しない。CLI自体はweb側で実行する | fbp-cli、local-main、local-auto-task、scripts/docs/task-workspace-tools.md |
 | DB索引の構築・再構築 | 標準対応 | 共通FFMの再構築区間だけPHPの時間制限を解除し、正常終了・例外時に元の設定へ復元。元から無制限／IDXなしを維持し、排他と業務データは変更しない。2026-11-18に専用検証アプリで確認し、c53bcceを標準配布先全3サーバーへ本番反映済み | fbp-db、fixed-file-manager-index-spec.md |
 | 独自画面・レスポンシブUI | 追加開発 | 標準画面で不足する業務UI、または明示指定 | fbp-original-screen |

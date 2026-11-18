@@ -206,7 +206,7 @@ section.customer-custom-section {
 
 ## 検証
 
-- `standard_screen_check --json='{"tb_name":"customer"}'` で ERROR がないことを確認する。
+- `standard_screen_check.sh --app <appcode> --note customer --json` で ERROR がないことを確認する。
 - `app_call` で `db_exe/rows` を呼び、標準の `db_exe edit/delete` アイコンが消えていること、追加した `db_additionals` 行ボタンが出ることを確認する。
 - 行ボタンの class/function を `app_call` し、ダイアログHTML、保存/削除後の一覧更新、対象データの更新/削除を確認する。
 - ダイアログ内で `<section>` / `<h4>` を使った場合は、横幅がダイアログからはみ出さないこと、先頭見出しの上paddingが意図通り効くことを確認する。
