@@ -15,6 +15,8 @@
 
 ## 機能一覧
 
+自動タスクのローカル運用は、Codexのsandbox起動引数と起動前チェックで書き込み範囲を制限する。活動統計・JSONログ解析の追加監視は廃止。実行時間はタスク別ローカルJSONで接続環境別に集計し、管理APIへ送信しない。根拠: local-auto-task、scripts/docs/task-codex-time.md、scripts/docs/auto-task-sandbox.md（2026-11-18、時間記録・移行・並行処理・native sandbox検証済み）。
+
 ローカル管理のプラン取得は `project_plan.sh` を使用する。SAMPLE（アカウントsample=1）を最優先し、次に料金管理のFREE／ASSIST／BUSINESS、それ以外をORIGINALとする。SAMPLEはFREE等と同じサービス上限対象。取得スクリプトは検証済み、サンプル画面・定義は2026-11-18に本番反映済み。auto-taskはcheck/execで最新プランとSkillのサービス上限をプロンプトへ渡し、現在有効な要件をAIが文脈で照合する。1ファイル上限500MB（設定値500MiB）、超過はOriginal・独自サーバー運用の相談案内を返して完了とする（実装完了・リリースとは区別）。ORIGINALは共通上限の対象外。根拠: local-auto-task/references/service-level.md、local-fbp-account-management、scripts/docs/project-plan.md。
 
 | 機能・依頼 | 区分 | 範囲・条件／非対応との境界 | 根拠Skill |
