@@ -14,6 +14,7 @@ description: Manage the FBP DB lifecycle, schema and screen reflection, and appl
 
 ## アプリの排他制御
 
+- FFMの`rebuild_indexes()`は索引作成中だけPHPの時間制限を解除し、正常終了・例外時に元の設定へ戻す。元の残り時間ではなく、元の秒数で計時を再開する。索引なしの早期終了は設定を変更しない。長時間の索引作成でもDB排他は継続する。仕様は`docs/fixed-file-manager-index-spec.md`、検証は専用検証アプリの`tests/ffm_index_time_limit.php`。
 - アプリコードで独自の `flock()` を実装しない。独自ロックファイルやラッパー経由でも同じ。排他制御は `fixed_file_manager`（通常は `$ctl->db()`）へ統一する。この禁止はアプリ層が対象で、FFM内部のロック実装を削除・置換する指示ではない。
 - 通常のFFMはコンストラクタでDBファイルの排他ロックを取得する。`read_only` は共有ロックなので、判定と更新を排他にする用途には使わない。ロック単位はレコードや店舗IDではなく実際の `.dat` ファイル。同じファイルを使う処理同士で排他になる。
 - FFMはDBファイルをパス順にロックする。順序が逆転する追加オープンでは、保持中のDBロックをいったんすべて解除して順番に取得し直す。独自の `flock` はこの管理外なので、混在させると循環待ちを作る。

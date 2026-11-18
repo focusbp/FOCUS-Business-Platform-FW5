@@ -2513,8 +2513,11 @@ class fixed_file_manager implements FFM {
 			return;
 		}
 		$current = ftell($this->hf);
-		$this->mark_indexes_dirty();
+		$previous_time_limit = (int) ini_get("max_execution_time");
+		// Finish rebuilding once rather than repeatedly aborting with dirty indexes.
+		set_time_limit(0);
 		try {
+			$this->mark_indexes_dirty();
 			foreach ($fields as $field) {
 				$values_by_shard = array_fill(0, self::INDEX_SHARDS, []);
 				$count = 0;
@@ -2534,6 +2537,8 @@ class fixed_file_manager implements FFM {
 			$this->cleanup_unused_indexes($fields);
 			$this->clear_indexes_dirty();
 		} finally {
+			// This restarts the original limit; PHP cannot restore its remaining budget.
+			set_time_limit($previous_time_limit);
 			if (is_resource($this->hf)) fseek($this->hf, $current);
 		}
 	}
