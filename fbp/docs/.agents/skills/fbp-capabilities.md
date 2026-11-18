@@ -23,7 +23,7 @@
 | --- | --- | --- | --- |
 | 公開・独自管理画面のフォーム基本形 | 標準対応／追加開発 | standard-formサンプルで親フォーム・標準部品・エラー・右寄せ操作を一組で再利用。認証・CSRF・業務検証は各入口で実装。Standard Screenの自動CRUDは置換しない | fbp-app-samples、fbp-public-pages、fbp-original-screen、fbp-dialog |
 | DB・ノート・CRUD・検索・一覧 | 標準対応／追加開発 | 新規CRUDはStandard Screenを基本とする。排他はfixed_file_manager。リリース対象設定はテスト変更→リリースで反映 | fbp-db、fbp-standard-screen |
-| DB索引の構築・再構築 | 標準対応 | 共通FFMの再構築区間だけPHPの時間制限を解除し、正常終了・例外時に元の設定へ復元。元から無制限／IDXなしを維持し、排他と業務データは変更しない。2026-11-18に専用検証アプリで確認、本番未反映 | fbp-db、fixed-file-manager-index-spec.md |
+| DB索引の構築・再構築 | 標準対応 | 共通FFMの再構築区間だけPHPの時間制限を解除し、正常終了・例外時に元の設定へ復元。元から無制限／IDXなしを維持し、排他と業務データは変更しない。2026-11-18に専用検証アプリで確認し、c53bcceを標準配布先全3サーバーへ本番反映済み | fbp-db、fixed-file-manager-index-spec.md |
 | 独自画面・レスポンシブUI | 追加開発 | 標準画面で不足する業務UI、または明示指定 | fbp-original-screen |
 | 手書きフォームの静的チェック | 条件付き | ローカルのtemplate_check.shで.tplのinput/textarea/selectを警告。hidden・標準定義元・対象要素のdata-fbp_notice="手書き指定"または"既存本番互換"は除外。互換属性は変更対象の本番実績を確認して順次付与、一括付与しない。警告は終了コード0、実行時HTML・JS生成要素は解析しない | local-template-check、scripts/docs/template-check.md（検証済み） |
 | ダイアログ・サイドパネル・メニュー | 標準対応／追加開発 | 権限と親子構造に従う。URL共有はコピーアイコン・全文リンクを使用し、結果フッターを置かず、アイコンとボタンの案内・読み上げで結果を伝える | fbp-dialog、fbp-side-panel、fbp-menu |
