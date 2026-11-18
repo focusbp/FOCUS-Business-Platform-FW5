@@ -52,8 +52,9 @@ description: Implement seller/shop-scoped Square OAuth connection flows in FBP a
 - Production では `session=false` を付ける。
 - `scope` は space-separated string を URL encode する。`+` 区切りで問題ない。
 - callback URL は Square Developers に登録した Redirect URL と完全一致させる。
-- FBP の `*` URL が Square 側で通らない場合があるため、OAuth callback は次の標準形式を優先する。
-  - `https://.../fbp/app.php?class=shop_original_management&function=square_oauth_callback`
+- callback URL は共通ルールに従い `$ctl->get_APP_URL("shop_original_management", "square_oauth_callback")` で生成する。例: `https://example.com/app-example/shop_original_management*square_oauth_callback`。
+- パラメータを付ける場合は最初の区切りを `?` とする。`app.php?class=...` の直書きや、base URLの文字列切出しでcallbackを組み立てない。
+- Square側で登録・認可に失敗した場合は、生成URLと登録値の完全一致、authorizeリクエストのエンコード、実際のエラーを確認する。未検証の推測で別形式へ切り替えない。
 
 ## Sandbox checklist
 - Square Developer Console で対象 app の environment が Sandbox になっている。
@@ -69,8 +70,8 @@ description: Implement seller/shop-scoped Square OAuth connection flows in FBP a
 1. Square Developer Console で対象 Application を開く。
 2. Sandbox / Production の利用環境を確認する。
 3. OAuth redirect URL に FBP callback URL を完全一致で登録する。
-   - 推奨形式: `https://<domain>/<app>/fbp/app.php?class=shop_original_management&function=square_oauth_callback`
-   - `*` を含む FBP URL は Square 側で通らない場合があるため避ける。
+   - `$ctl->get_APP_URL("shop_original_management", "square_oauth_callback")` が返すURLを登録する。
+   - 例: `https://example.com/app-example/shop_original_management*square_oauth_callback`。authorizeとtoken交換でも同じ生成値を使う。
 4. Sandbox では Seller test account を作成し、初回OAuth前に `Open in Square Dashboard` で一度開く。
 5. Application ID と Application Secret を控える。Access token はOAuth連携用の事前設定には使わない。
 

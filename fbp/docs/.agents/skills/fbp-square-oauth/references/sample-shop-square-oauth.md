@@ -91,12 +91,7 @@ private function square_base_url(Controller $ctl): string {
 }
 
 private function square_redirect_url(Controller $ctl): string {
-	$base = $ctl->get_APP_URL("base", "page");
-	$prefix = "/base*page";
-	if (substr($base, -strlen($prefix)) === $prefix) {
-		$base = substr($base, 0, -strlen($prefix));
-	}
-	return $base . "/fbp/app.php?class=shop_original_management&function=square_oauth_callback";
+	return $ctl->get_APP_URL("shop_original_management", "square_oauth_callback");
 }
 
 private function square_oauth_scope(): string {

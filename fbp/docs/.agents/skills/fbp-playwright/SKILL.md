@@ -59,14 +59,14 @@ const browser = await chromium.launch({
 
 ## Workflow
 
-管理画面へログインしてテスト・本番のブラウザー検証を行う前に、[fbp-passkey](../fbp-passkey/SKILL.md) の「AIによる管理画面確認」を読む。共通認証ではAPI発行ワンタイムコードを使い、対象ユーザーと環境を明示する。環境側の専用クライアントはローカル運用ルールを参照する。パスワード認証停止の解除や鍵のリセットをテストの準備に使わない。パスワード／パスキーのログイン操作そのものを検証する場合は、その認証経路を使う。公開画面だけの確認やブラウザー不要のCLI検証には、この参照を必須にしない。
+管理画面へログインしてテスト・本番のブラウザー検証を行う前に、[fbp-passkey](../fbp-passkey/SKILL.md) の「AIによる管理画面確認」を読む。本Skillの管理画面ログインはAPI発行ワンタイムコードだけを使い、対象ユーザーと環境を明示する。固定パスワード・パスキーへのフォールバック、パスワード認証停止の解除、鍵のリセットを行わない。未対応の独自認証や発行失敗では、ログインが必要な確認の未実施範囲を報告する。認証方式そのものの検証は、ユーザーが明示的に依頼した別の認証検証として扱う。公開画面だけの確認やブラウザー不要のCLI検証には、この参照を必須にしない。
 
 1. Resolve app targets with the normal local rule first. For an explicit `app-xxx`, run
-   `MGMT_API_MODE=production ~/scripts/sftp_api.sh get app-xxx` and use its `test_url`,
-   `test_login_id`, and `test_password` values.
+   `MGMT_API_MODE=production ~/scripts/sftp_api.sh get app-xxx` to resolve the target URL,
+   then select a valid user in the requested environment. Do not retrieve a fixed login password for browser verification.
 2. If checking source changes, sync before browser verification:
    `~/scripts/copy_to_web.sh app-xxx`.
-3. When testing password login itself, pass FBP login values through environment variables. For a `gw.soshiki-kaikaku.com` test URL,
+3. Issue a fresh code with `~/scripts/login_onetimecode.sh <appcode> <user-id> --test|--production`, open the returned `login_url`, and submit `code` through its form. Keep both values in process memory or temporary environment variables; never print or persist the code. For a `gw.soshiki-kaikaku.com` test URL,
    create a browser context with the wrapper-provided `PLAYWRIGHT_TEST_BASIC_AUTH_USERNAME` and
    `PLAYWRIGHT_TEST_BASIC_AUTH_PASSWORD` as `httpCredentials`. Do not substitute the app's FBP
    login ID/password for HTTP Basic authentication, and do not write either credential into a
@@ -152,6 +152,8 @@ await page.evaluate((parentId) => {
 
 Run this shape with `~/scripts/playwright_node.sh -`:
 
+発行直後の `login_url` と `code` を `APP_ONETIMECODE_LOGIN_URL` / `APP_ONETIMECODE` として渡す。コードの有効期限は60秒で、失敗時に同じコードを再使用しない。
+
 ```js
 const { chromium } = require("playwright");
 
@@ -159,6 +161,9 @@ const { chromium } = require("playwright");
   const appcode = process.env.APP_CODE;
   const out = `/home/nakama/Screenshot/${appcode}/check.png`;
   const testUrl = process.env.APP_TEST_URL;
+  const loginUrl = process.env.APP_ONETIMECODE_LOGIN_URL;
+  const code = process.env.APP_ONETIMECODE;
+  if (!loginUrl || !code) throw new Error("fresh one-time login credentials are required");
   const browser = await chromium.launch({
     headless: true,
     executablePath: "/usr/bin/google-chrome",
@@ -176,16 +181,15 @@ const { chromium } = require("playwright");
   const context = await browser.newContext(contextOptions);
   const page = await context.newPage();
   page.setDefaultTimeout(10000);
-  await page.goto(testUrl, { waitUntil: "domcontentloaded" });
-
-  if (await page.locator('input[name="login_id"]').count()) {
-    await page.fill('input[name="login_id"]', process.env.APP_LOGIN_ID || "");
-    await page.fill('input[name="password"]', process.env.APP_PASSWORD || "");
-    await Promise.all([
-      page.waitForURL(/class=base|base\*page/, { timeout: 20000 }),
-      page.locator('#login_form button, button[type="submit"]').first().click()
-    ]);
+  if (new URL(loginUrl).origin !== new URL(testUrl).origin) {
+    throw new Error("one-time login origin does not match the target");
   }
+  await page.goto(loginUrl, { waitUntil: "domcontentloaded" });
+  await page.locator('input[name="code"]').fill(code);
+  await Promise.all([
+    page.waitForURL(/class=base|base\*page/, { timeout: 20000 }),
+    page.locator('form button[type="submit"]').click()
+  ]);
   await page.waitForFunction(() => typeof window.appcon === "function", null, {
     timeout: 10000
   });

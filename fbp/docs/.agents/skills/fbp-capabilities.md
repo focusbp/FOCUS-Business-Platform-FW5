@@ -34,7 +34,7 @@
 | 動画そのものの解析・要約・情報抽出 | 非対応 | 添付・URLの動画を解析する完成物依頼。動画という単語だけで他の依頼を拒否しない | 運用方針（Task #5005） |
 | 動画音声の文字起こし | 非対応 | MP4等の指定時間までの文字起こしも含む。音声単独の対応可否は別途確認 | 運用方針（Task #5005） |
 | 動画ファイルの生成・制作 | 非対応 | 動画完成物の生成依頼。静止画像の制作を含めない | 運用方針（Task #5005） |
-| 静止画像の生成・編集・合成 | 条件付き | auto-taskの制作ツールとアプリのAPI実装を区別。既存ツールで作れる画像は進める | imagegen、local-image-compose、local-image-effects、local-auto-task |
+| 静止画像の生成・編集・合成 | 条件付き | auto-taskの制作ツールとアプリのAPI実装を区別。image-effects／image-composeともAI補完可。指定範囲だけを合成し範囲外を保持、隠れた形状は推定生成として目視確認する。既存ツールで作れる画像は進める | imagegen、local-image-compose、local-image-effects、local-auto-task |
 | 新規画像処理スクリプトの作成・改修 | 開発者対応 | 既存ツールの引数・マスク・設定JSON指定は開発に含めない | local-auto-task |
 | 公開ページ・公開フォーム・埋込み | 追加開発 | 本人性・閲覧権限・URL設計を確認。管理画面の認証迂回を作らない | fbp-public-pages、fbp-embed_app |
 | 簡易電子契約（2名のPDF承認） | 追加開発／検証済みサンプル | 管理画面の標準一覧・user由来の自分情報・相手の氏名/メール・PDF1件・最終確認で登録・双方メール認証と承認・証跡ZIP。承認URL10日、公開取得3日、管理側取得。SMTPは導入先設定、検証は模擬メール | fbp-app-samples/simple-electronic-contract、fbp-standard-screen、fbp-dialog、fbp-public-pages |
@@ -42,7 +42,8 @@
 | ローカル作業から「私宛にメール」 | 条件付き | ユーザーの明示的な送信依頼で、important@soshiki-kaikaku.comへ送信。AIが会話に応じて件名・本文を作成し、既存sendmail.shを使用。アプリのメール送信機能とは別 | local-mail-me（Skill検証済み、送信経路は既存実装） |
 | POP／IMAP受信処理 | 条件付き | 受信実行とサーバー側削除の許可を分ける。開発パネルの受信ポート保存では1〜65535の範囲チェックを行わず、0も保存可 | fbp-receive-mail、app/setting/setting.php |
 | 定期処理・webhook・LINE連携 | 標準対応／追加開発 | 登録設定・本人との紐付け・外部送信許可が必要。cron定義はテスト変更→リリースで反映 | fbp-cron、fbp-webhook |
-| 公式外部API連携・API認証・MCP | 条件付き | 提供元の公式API・設定・認証・権限を確認 | fbp-api-auth、fbp-mcp-server |
+| 公式外部API連携・API認証・MCP | 条件付き | 提供元の公式API・設定・認証・権限を確認。Square OAuth callbackもget_APP_URLで生成し、登録URLとauthorize／token交換の値を一致させる（手順・サンプル更新、Square実接続は未検証） | fbp-api-auth、fbp-mcp-server、fbp-square-oauth |
+| Playwrightによる管理画面確認 | 条件付き | 管理画面ログインはAPI発行ワンタイムコードのみ。未対応・発行失敗では固定パスワード等へ切り替えず未検証範囲を報告。テストゲートウェイのHTTP Basic認証は別レイヤー | fbp-playwright、fbp-passkey |
 | Square決済・店舗OAuth・サービス会員管理 | 条件付き | 契約・設定・対象店舗・決済実行許可が必要 | fbp-square-payment、fbp-square-oauth、fbp-service-user-management |
 | 管理認証・パスキー・DSP | 条件付き | 標準仕様と既存認可を確認。ローカルの正規data_* CLIはアプリDSPの保守例外（固定資格情報DSP・HTTP・アプリ実行検証は維持）。共通コード変更は別保守 | fbp-passkey、fbp-dsp |
 | 管理アプリ起点のマスターログイン | テスト検証済み／対応配置で本番有効化済み | 管理アプリの通常ログイン済みマスターが、既存HTTPS/HMAC＋短期許可照会＋60秒単回券で共通認証先へログイン。最長30分・鍵管理は再認証。受信先別設定必須。共通版は独自認証を拒否。FOCUS2はアプリ専用受信処理をテスト検証・指定16本番環境で有効化済み（app-focus2 tests/managed-login参照）。新しい署名鍵は不要。新規作成の設定工程を追加（managed_login_setup.py、必要なサーバー権限取得後に反映・HTTPS確認。新規2件の本番補完済み、本人パスキーによる実操作は未確認） | [実装・設計](../../managed-master-login-design.md)、fbp-passkey、app-fwtest tests/managed-login |
