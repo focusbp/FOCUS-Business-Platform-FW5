@@ -148,20 +148,20 @@ The installer inserts these three demo records with generated FBP IDs:
 ## Verification
 
 Use the CLI checks below as supporting checks. For new PDF UI/download features or changes to dialog design, retrieval, or access paths, also follow
-`fbp-pdf` and `fbp-playwright`: click the actual list/detail PDF buttons in Playwright,
+`fbp-pdf` and the environment's browser verification workflow: click the actual list/detail PDF buttons in Playwright,
 capture the download or PDF response, parse the file, and verify the expected customer
 fields. For new flows check desktop and supported mobile; for existing flows check affected branches only. Content, calculation, or document-layout changes without retrieval impact require generated-file verification, not another Playwright run. These sample buttons return PDF
 directly; do not change their handlers to `show_pdf()` without also changing the entry
 to Ajax dialog display. CLI success alone does not complete verification of a new or changed browser flow. If required browser verification cannot run, report the reason and the unverified scope.
 
-Run these after the installer. Set CODEX_TASK_WORKSPACE through the local task workspace helper first; it points to the verified code_dir/task ID directory. Keep the CLI working directory in the web runtime.
+Run these after the installer. Set SAMPLE_TEST_OUTPUT_DIR to an absolute writable output directory approved by the operating environment, and keep the CLI working directory in the target runtime.
 
 ```bash
 php fbp/cli.php app_call --json='{"class":"customers_original_management","function":"run"}'
 php fbp/cli.php app_check --json='{"class":"customers_original_management","function":"run","checks":[{"path":"response_json.work_area.html","contains":"original_screen_toolbar original_screen_toolbar_end","label":"toolbar"},{"path":"response_json.work_area.html","contains":"search_box original_search_panel","label":"search panel"},{"path":"response_json.work_area.html","contains":"original_screen_table","label":"list table"},{"path":"response_json.work_area.html","contains":"Customers: 3","label":"seed count"}]}'
 php fbp/cli.php data_list --json='{"table":"customers","max":20}'
-php fbp/cli.php app_call --json="{\"class\":\"customers_csv\",\"function\":\"download\",\"output_file\":\"${CODEX_TASK_WORKSPACE:?}/customers.csv\"}"
-php fbp/cli.php app_call --json="{\"class\":\"customers_pdf\",\"function\":\"list_pdf\",\"output_file\":\"${CODEX_TASK_WORKSPACE:?}/customers.pdf\"}"
+php fbp/cli.php app_call --json="{\"class\":\"customers_csv\",\"function\":\"download\",\"output_file\":\"${SAMPLE_TEST_OUTPUT_DIR:?}/customers.csv\"}"
+php fbp/cli.php app_call --json="{\"class\":\"customers_pdf\",\"function\":\"list_pdf\",\"output_file\":\"${SAMPLE_TEST_OUTPUT_DIR:?}/customers.pdf\"}"
 ```
 
 Check:
@@ -172,7 +172,7 @@ Check:
   `search_box original_search_panel`, and `original_screen_table`.
 - Edit Save does not return `Customer not found.` and the list still shows the
   three seed rows.
-- `$CODEX_TASK_WORKSPACE/customers.csv` starts with the fixed CSV header and has no JSON mixed in.
-- `$CODEX_TASK_WORKSPACE/customers.pdf` starts with `%PDF-`; use `pdftotext` if available.
+- `$SAMPLE_TEST_OUTPUT_DIR/customers.csv` starts with the fixed CSV header and has no JSON mixed in.
+- `$SAMPLE_TEST_OUTPUT_DIR/customers.pdf` starts with `%PDF-`; use `pdftotext` if available.
 
 If a check fails, fix the failing stage before adding new behavior.

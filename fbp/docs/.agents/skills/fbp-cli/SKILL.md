@@ -15,7 +15,7 @@ description: Execute and verify FBP features through cli.php commands including 
 標準機能だけのノート作成・表示項目変更の完了条件は `fbp-standard-screen` の「標準画面の設定確認と完了条件」を正本とする。ビルダーのチェッカー結果を依頼と照合し、本Skillの通常の初動・作成後CLI確認を重ねない。独自処理・明示された操作確認・本番リリースの判断にはそれぞれの確認を適用する。
 
 ## workflow
-1. 既存ノートが特定できる実装探索は、環境にノートからクラス・関数へ辿る参照専用ツールがあれば先に使う。ノート不明で文言やキーワードから探す場合は、環境に定義・設定・コードの横断検索があれば先に使う（ローカル環境は `local-main.md` の `local-fbp-find`）。対象の設定・入口が得られた場合、初動の全件取得や広範囲検索を重ねない。それらで解決できない範囲だけ `db_schema`, `db_tables_list`, `db_additionals_list` を確認。
+1. 既存ノートが特定できる実装探索は、環境にノートからクラス・関数へ辿る参照専用ツールがあれば先に使う。ノート不明で文言やキーワードから探す場合は、環境に定義・設定・コードの横断検索があれば先に使う。対象の設定・入口が得られた場合、初動の全件取得や広範囲検索を重ねない。それらで解決できない範囲だけ `db_schema`, `db_tables_list`, `db_additionals_list` を確認。
 2. 必要なら `cron_list`, `webhook_rule_list`, `embed_app_list` を確認。
 3. 一括投入は「1コマンド1JSON」で実行し、各ステップの必須キーを事前検証してから流す。
 4. 実装後は変更した結果を確認する最小の方法を選ぶ。`app_call` / `app_check` / 関連する既存テストのすべてを機械的に実行しない。ブラウザ等で同じ期待値を確認済みなら重ねない。
@@ -34,9 +34,7 @@ description: Execute and verify FBP features through cli.php commands including 
   `php <app-root>/fbp/cli.php data_get --json='{"table":"customers","id":1}'`
   `php <app-root>/fbp/cli.php data_list --json='{"table":"customers","max":100}'`
 - HMAC API 経由のデータ更新は、環境固有のクライアント設定に従う。
-- `fbp_cli_check.sh`ラッパーがある環境では、JSONを `'{...}'`・`--json='{...}'`・`--json '{...}'` の3形式で渡せる。`app_call` / `app_check` / `method_call` は `<class> <function> [追加JSON]` も利用でき、追加JSONに `post` / `get` / `files` / `output_file` 等を渡す。class/functionは位置引数とJSONで重複指定しない。
-- 標準画面検査は独立した `standard_screen_check.sh --app <appcode> --note <ノート> --json` を使う。旧CLIコマンドは廃止。ボタン登録等も `db_additionals_add --json '{...}'` 形式に対応する。ラッパーの`--summary`等はコマンド前へ置く。不正JSON・余分な引数は実行前に停止する。CLI本体を直接呼ぶ場合は以下の`--json`形式を使う。
-- ラッパーで足りない CLI はそのまま透過実行できる:
+- 定期処理設定の確認:
   `php <app-root>/fbp/cli.php cron_list --json='{"id":1}'`
 
 ## Excel風ノートの開発時検証
@@ -48,12 +46,9 @@ Developer Modeでも、web側CLIの `db_tables_add`／`db_tables_edit` でExcel�
 本番→テストの自動同期は廃止。ノート追加CLIは本番定義を取り込まない。差分移行はサポートタスクで明示された範囲だけ扱う。定義を含むリリースはテスト→本番であり、修正したテスト定義を反映する。専用取り込みコマンドの検証とHTTP／汎用app_callからの取込み拒否は維持する。
 
 ## bulk execution safety
-- Taskがある対話作業では、`source ~/scripts/lib/task_workspace.sh`、`task_workspace_init <appcode> <task id>` でCODEX_TASK_WORKSPACEとTMPDIRを設定してからツールを呼ぶ。auto-taskは親処理が設定する。
-- `<code_dir>` はproduction管理APIで対象appcodeから解決した編集元コードを使う。sandboxはそのcode_dirの領域全体を許可する。同じcode_dir内の引継ぎ元Taskを参照・更新できるが、通常の作業は自分のTask領域に置き、他Taskの更新は引継ぎに必要な範囲に限定する。
-- Task共通領域の `time.json` と `.time.lock` は親処理の実行時間記録用。CLI作業で上書き・削除しない。
-- このローカル環境のCLI作業用スクリプト・入力JSON・一時生成物は `~/work/tasks/<code_dir>/<task id>/` に置く。`<task id>` は対象Taskの実IDを使い、Task IDのない対話作業は `~/work/tasks/<code_dir>/interactive/<作業名>/` に分ける。作業場所のためだけにTaskを新規作成しない。
+- 作業用スクリプト・入力JSON・一時生成物は環境が指定する作業領域へ置く。Task間の共有範囲、実行記録の保護、環境変数の初期化は運用ルールに従う。作業場所のためだけにTaskを新規作成しない。
 - 長い複合コマンドを `bash -lc '...'` に多重クォートして実行しない（特に `php -r` / ヒアドキュメント混在を禁止）。
-- 一括処理は上記の作業場所に実行スクリプトを作成し、`set -euo pipefail` 付きで `bash ~/work/tasks/<code_dir>/<task id>/<script>.sh` のように実行する。CLI自体の実行ディレクトリは対象の `web` 側とし、スクリプトの保管先と区別する。
+- 一括処理は環境の作業領域にスクリプトを作り、`set -euo pipefail`付きで `bash <work-dir>/<script>.sh` を実行する。CLIの実行ディレクトリは対象の実行環境とし、スクリプトの保管先と区別する。
 - JSON は各操作ごとに個別で組み立てる（`db_tables_add`, `db_fields_add`, `screen_fields_add`, `data_add` を混在させた巨大1発JSONを作らない）。
 - 失敗時はその場で停止し、成功済みの確認コマンド（`*_list` / `data_list`）で再開位置を特定してから再実行する。
 
@@ -72,7 +67,7 @@ Developer Modeでも、web側CLIの `db_tables_add`／`db_tables_edit` でExcel�
 - screen_fields の確認:
   `php <app-root>/fbp/cli.php screen_fields_list --json='{"tb_name":"<tb_name>","screen_name":"<screen_name>"}'`
 - 標準画面チェッカー:
-  `~/scripts/standard_screen_check.sh --app <appcode> --note <ノート名・テーブル名・ID> --json`
+  環境が提供する読取り専用の標準画面チェッカーを使う。
   詳細・完了判断は `fbp-standard-screen` を参照する。
 - 生の CLI でしか表せない場合:
   `php <app-root>/fbp/cli.php <command> --json='{}'`
@@ -94,4 +89,4 @@ Developer Modeでも、web側CLIの `db_tables_add`／`db_tables_edit` でExcel�
 
 ## constraints
 - OSローカルの正規 `cli.php` の `data_list` / `data_get` / `data_add` / `data_update` / `data_delete` は保守用操作としてアプリDSPを適用しない。HTTP、別PHP、`app_call` / `app_check` / `method_call` はこの例外に含めない。共通パスキー・確認コードなどframework固定の資格情報ポリシーは維持する。操作対象と更新・削除の許可は通常どおり確認する。
-- 実行ディレクトリは対象環境ルールに従う（環境固有は framework-development を参照）。
+- 実行ディレクトリは対象環境ルールに従う（環境固有の運用ルールを参照）。

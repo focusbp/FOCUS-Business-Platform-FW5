@@ -45,7 +45,10 @@
 | POP／IMAP受信処理 | 条件付き | 受信実行とサーバー側削除の許可を分ける。開発パネルの受信ポート保存では1〜65535の範囲チェックを行わず、0も保存可 | fbp-receive-mail、app/setting/setting.php |
 | 定期処理・webhook・LINE連携 | 標準対応／追加開発 | 登録設定・本人との紐付け・外部送信許可が必要。cron定義はテスト変更→リリースで反映 | fbp-cron、fbp-webhook |
 | 公式外部API連携・API認証・MCP | 条件付き | 提供元の公式API・設定・認証・権限を確認。Square OAuth callbackもget_APP_URLで生成し、登録URLとauthorize／token交換の値を一致させる（手順・サンプル更新、Square実接続は未検証） | fbp-api-auth、fbp-mcp-server、fbp-square-oauth |
-| Playwrightによる管理画面確認 | 条件付き | 管理画面ログインはAPI発行ワンタイムコードのみ。未対応・発行失敗では固定パスワード等へ切り替えず未検証範囲を報告。テストゲートウェイのHTTP Basic認証は別レイヤー | fbp-playwright、fbp-passkey |
+| ローカル新規プロジェクト作成 | ローカルツール | 管理台帳・プロビジョニング・共用ソース配置・初期設定の正規入口を使う。共通frameworkの実装仕様とは分離 | local-new-project |
+| .datバックアップ・比較のローカル実行 | ローカルツール | 共通のスナップショット形式・機密性方針に従い、対象解決・SVN除外・各スクリプト操作をローカル側で扱う | fbp-dat-backup、local-dat-backup |
+| FFMログ復旧のローカル実行 | ローカルツール | 共通の復旧モード・競合検査に従い、アプリとtest/productionを明示したクライアントで実行する | fbp-ffm-recovery、local-ffm-recovery |
+| ローカルPlaywrightによる管理画面確認 | 条件付き | 管理画面ログインはAPI発行ワンタイムコードのみ。未対応・発行失敗では固定パスワード等へ切り替えず未検証範囲を報告。テストゲートウェイのHTTP Basic認証は別レイヤー | local-playwright、fbp-passkey |
 | Square決済・店舗OAuth・サービス会員管理 | 条件付き | 契約・設定・対象店舗・決済実行許可が必要 | fbp-square-payment、fbp-square-oauth、fbp-service-user-management |
 | 管理認証・パスキー・DSP | 条件付き | 標準仕様と既存認可を確認。ローカルの正規data_* CLIはアプリDSPの保守例外（固定資格情報DSP・HTTP・アプリ実行検証は維持）。共通コード変更は別保守 | fbp-passkey、fbp-dsp |
 | 管理アプリ起点のマスターログイン | テスト検証済み／対応配置で本番有効化済み | 管理アプリの通常ログイン済みマスターが、既存HTTPS/HMAC＋短期許可照会＋60秒単回券で共通認証先へログイン。最長30分・鍵管理は再認証。受信先別設定必須。共通版は独自認証を拒否。FOCUS2はアプリ専用受信処理をテスト検証・指定16本番環境で有効化済み（app-focus2 tests/managed-login参照）。新しい署名鍵は不要。新規作成の設定工程を追加（managed_login_setup.py、必要なサーバー権限取得後に反映・HTTPS確認。新規2件の本番補完済み、本人パスキーによる実操作は未確認） | [実装・設計](../../managed-master-login-design.md)、fbp-passkey、app-fwtest tests/managed-login |

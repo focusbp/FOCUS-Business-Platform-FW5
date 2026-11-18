@@ -95,7 +95,7 @@ description: Design, implement, or adjust FBP side panels for Standard Screen an
 
 ## 専用スクリプトによる子ノート作成
 
-- 環境のノート作成スクリプトが子ノートに対応している場合は `fbp-standard-screen` の専用構築フローを優先する。定義JSONに親ノート名と `list_on_side` を含め、サンプル投入時だけ既存親レコードIDを指定する。完了条件は同Skillの設定チェックを正本とし、撮影を重ねない。ローカルの入口と仕様は `../local-main.md` の「標準画面の専用構築」を参照する。
+- 環境のノート作成スクリプトが子ノートに対応している場合は `fbp-standard-screen` の専用構築フローを優先する。定義JSONに親ノート名と `list_on_side` を含め、サンプル投入時だけ既存親レコードIDを指定する。完了条件は同Skillの設定チェックを正本とし、撮影を重ねない。作成ツールの入口と仕様は環境の運用ルールを参照する。
 - 親ノートと撮影対象レコードを作成前に確認し、親子設定・メニュー非表示・親一覧アイコン・サイドパネル項目を自動登録する。`parent_id` はframeworkが自動追加するため手動登録しない。親レコードの新規投入・既存データの変更は行わない。
 - 通常利用は作成前チェック、登録成功、子サイドパネルのスクショ1枚で完了する。以下の verification、作成後の定義照合、追加のCRUD・検索・権限・寸法チェックを重ねない。撮影失敗は失敗として報告し、専用の再撮影入口を使う。
 - この例外は対応する新規標準子ノートに限る。独自画面・独自権限・副作用・既存変更は通常手順を使う。スクリプト自体の開発・変更時は親IDの紐付け・入力拒否・撮影経路などを検証する。
@@ -115,4 +115,4 @@ description: Design, implement, or adjust FBP side panels for Standard Screen an
 - DB定義、`list_width`、親子関係、`screen_fields`: `fbp-db`
 - Standard Screen項目設定、標準保存、副作用: `fbp-standard-screen`
 - Original Screen実装、`rows_child()`、テンプレート: `fbp-original-screen`
-- ブラウザ確認: `fbp-playwright`
+- ブラウザ確認: 環境のブラウザー検証手順

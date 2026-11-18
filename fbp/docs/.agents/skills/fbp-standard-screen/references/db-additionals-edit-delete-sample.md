@@ -6,7 +6,7 @@ framework の `db_exe` に app 固有分岐を入れない。
 ## 登録例
 
 ```bash
-php /home/nakama/web/app-xxx/fbp/cli.php db_additionals_add --json='{
+php <app-root>/fbp/cli.php db_additionals_add --json='{
   "tb_name":"customer",
   "button_title":"edit_square",
   "class_name":"customer_custom_edit",

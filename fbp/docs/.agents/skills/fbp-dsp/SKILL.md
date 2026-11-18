@@ -47,8 +47,8 @@ Definitions are specifications, not runtime configuration. Saving them does not 
 
 Use `fbp/lib/DspPolicyTemplate.php` or CLI `app_call dsp generate_template` with note_id or db_class/db_table to obtain the source template and registry entry. Allow authorization methods simply return; Allow reads return DspReadDecision(true, null). Deny methods throw DspException. Unconfigured operations use the Allow template. Custom starts with a refusing placeholder; replace it only after confirmed conditions are implemented and tested. Do not install the placeholder as a finished Custom implementation. There are no definition hashes to match at runtime. Keep policy.md as a generated human-readable description and the panel definitions as the source of truth.
 
-Auto Task creation (type 8) has two stages, tracked by existing task/comment history, with no new status flags:
-1. Read-only investigation and one combined proposal: include candidate notes, selection reasons, exclusions, all four operation modes and conditions, and differences/effects for existing policies in the same reply. Bundle unresolved business questions and explain existing code/release permission checkboxes when production application is requested. Request agreement to targets and conditions together using the existing customer-response-wait status and TASKEXEC_WAIT_CUSTOMER: true. Do not request target selection agreement separately before proposing conditions.
+Policy creation has two stages; choose the stage from explicit request/agreement evidence:
+1. Read-only investigation and one combined proposal: include candidate notes, selection reasons, exclusions, all four operation modes and conditions, and differences/effects for existing policies in the same reply. Bundle unresolved business questions and identify the necessary change/release permissions. Request agreement to targets and conditions together using the environment's normal conversation workflow. Do not request target selection agreement separately before proposing conditions.
 2. After agreement to the combined proposal and resolution of necessary questions, save confirmed definitions, create PHP, test allow/deny behavior and release under existing code/release permissions. Do not ask again for targets or conditions already agreed. Permissions ON alone, silence, elapsed time and a generic initial creation/change request do not substitute for agreement. Additional questions are needed only for unresolved rights, scope changes or missing permissions.
 
 For new creation and additions/changes, select the starting stage from explicit evidence in the request and comment history:
@@ -57,11 +57,11 @@ For new creation and additions/changes, select the starting stage from explicit 
 - Customer explicitly requests concrete note, operation and resulting mode/conditions, or has already agreed to that exact difference or combined proposal: stage 2 for that scope, under existing change/release permissions. Do not ask again for that already explicit instruction. A generic request or permission ON is insufficient.
 - Partial agreement: confirm only the unresolved part. Expanding scope requires confirmation only of the additional part.
 
-Preserve unrelated notes, operations, conditions, exceptions and PHP methods. Add only the selected definition rows; update only the agreed rows/operations. Do not reset all definitions or regenerate unrelated code to repair discrepancies noticed during this task. If a shared helper would change other operations, explain that additional effect and obtain agreement before making it. Report the actual changes and tests/release results. Use the existing customer-response-wait status for unresolved questions, never a new flag.
+Preserve unrelated notes, operations, conditions, exceptions and PHP methods. Add only the selected definition rows; update only the agreed rows/operations. Do not reset all definitions or regenerate unrelated code to repair discrepancies noticed during this task. If a shared helper would change other operations, explain that additional effect and obtain agreement before making it. Report the actual changes and tests/release results. Use the environment's normal handling for unresolved questions; do not invent new workflow flags.
 
 Examples: “Add DSP to reservations” starts at the reservation policy proposal; “Change reservation Update from owner-or-manager to manager-only” starts at implementation/testing of Update and does not reopen Read or other notes. An unclear request to review access starts at target selection.
 
-Audit (type 9) reads both panel definitions and PHP, including changed/deleted definitions, missing implementations and undefined data paths. It remains read-only and reports discrepancies; it does not automatically update definitions or code.
+A DSP audit reads both panel definitions and PHP, including changed/deleted definitions, missing implementations and undefined data paths. It remains read-only and reports discrepancies; it does not automatically update definitions or code.
 
 ## Project layout and registration
 
@@ -127,13 +127,11 @@ Only after trusted authentication/ownership checks conclusively establish a norm
 
 Throw `new DspException('stable_rule_id', 'reason_code')`. Keep details to identifiers/codes; never put raw records, tokens or passwords in exceptions. External messages are generic; internal DSP logs contain operation, DB, row ID, channel, rule/reason and trace ID. Unexpected exceptions are wrapped as evaluation errors and stop the operation.
 
-Audit is read-only: compare policy.md, implementations, normal FFM call sites and undefined DBs; run allow/deny tests only on isolated disposable data. Do not change code/docs/configuration, sync or release unless the user changes the task scope. In support task type 9, request a separate policy/change task for fixes. Missing policies and unverified tests must be reported, not treated as a clean audit.
+Audit is read-only: compare policy.md, implementations, normal FFM call sites and undefined DBs; run allow/deny tests only on isolated disposable data. Do not change code/docs/configuration, sync or release unless the user changes the task scope. For a read-only audit, handle fixes as separately authorized policy changes. Missing policies and unverified tests must be reported, not treated as a clean audit.
 
 ## Introduction and verification
 
-The local DSP worker parent now performs the infrastructure sync before starting Codex when code-change permission is ON. Confirm success in the provided dsp_sync.log instead of running the same full sync again. The exception is confined to the parent's sync subprocess; subsequent Codex application sync remains --app-only. Audit and permission-OFF tasks skip it. This preparation does not replace explicit target/condition agreement.
-
-For local Auto Task policy implementation, infrastructure synchronization is owned by the parent script. Codex must verify the provided dsp_sync.log and DSP settings reads before implementation, without repeating the full copy_to_web call. Later app synchronization uses --app-only; framework source edits remain prohibited, and production release retains its separate permissions and workflow.
+Preparation and synchronization follow the operating environment. Verify any preparation already performed by the parent workflow and avoid repeating it; a successful preparation does not replace agreement on policy scope or authorize release.
 
 1. Read the project's relevant docs and existing auth/data access. Inventory targets and currently undefined DBs.
 2. Confirm business rules, create/update policy.md, registry and implementation for confirmed targets only.
@@ -142,4 +140,4 @@ For local Auto Task policy implementation, infrastructure synchronization is own
 5. Test production-like parent/child volumes and assert decision counts are linear (no dependency DSP calls or duplicate row judgment). Run meaningful multi-process tests for locks. FFM does not provide multi-DB rollback.
 6. Report actual results and unresolved rules. Use the existing project support permissions; policy creation does not authorize production release by itself.
 
-Choose regression checks for the changed behavior; the 1,000-case dsp_matrix.php suite is no longer mandatory and must not be run automatically. Keep it available for an explicit request. If used, provide an isolated workspace and a baseline preserving its relative interface dependency. Run checks from the test environment, not the source tree. Use isolated test fixtures; app-soshikikaikaku currently has no project DSP while its rules are reconsidered.
+Choose regression checks for the changed behavior rather than requiring a fixed full suite. Use isolated test fixtures and preserve their dependency paths. Run checks against the resolved test runtime, not the source tree; determine each application's actual DSP state from current definitions and code.

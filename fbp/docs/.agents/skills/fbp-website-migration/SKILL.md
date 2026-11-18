@@ -22,7 +22,7 @@ description: Migrate WordPress or HTML websites into an FBP app while preserving
 4. 移行時にURLを精査し、識別キー（例：path）によるページ切替はpublic_pagesの明示的なfunctionへ変更する。固定ページはpublic_pages*top/contact等、記事はpublic_pages*article_detail?id等のFBP形式にする。既存LINE等との関数名衝突を避け、旧URL対応・内部リンク・canonicalを揃える。具体的な変更と検証は[URLの精査・変更](references/fbp-integration.md#urlの精査変更)を参照する。
 5. 公開・下書き・非公開・予約日時、記事/画像の対応、カテゴリ、サムネイルを保持する。公開状態不明の原本を一括公開しない。日付不明を1970年表示にしない。
 6. 初回取込みは明示的なCLI操作に分離する。通常アクセス・ログイン・リリースで自動実行しない。全入力・既存キー・ハッシュを先に照合し、同一データは作成0件、不一致は上書きせず停止する。バックアップと操作許可を確認し、アプリ独自のflockを使わない。
-7. 見た目・操作は原本と代表画面を比較する。件数一致だけでデザインやフォームも再現済みとしない。必要な画面確認はfbp-playwrightを使い、通知は保存・送信受付・実着信を分ける。
+7. 見た目・操作は原本と代表画面を比較する。件数一致だけでデザインやフォームも再現済みとしない。必要な画面確認は環境のブラウザー検証手順を使い、通知は保存・送信受付・実着信を分ける。
 
 ## 同梱ツール
 
@@ -37,6 +37,6 @@ CLI専用Importerはassets/website_import/website_import.php。対象ノート�
 
 ## 環境固有の運用
 
-台帳・同期・CLI・配布は環境ルールを正本とする。利用可能ならDNS/Apache/SSLはlocal-fbp-domain、配布はlocal-release、root認証はlocal-server-root-password、自動工程はlocal-auto-taskを使う。このSkillはそれらの許可を代替しない。
+台帳・同期・CLI・配布は環境ルールを正本とする。DNS/Apache/SSL、配布、サーバー認証、自動工程は環境が提供する専用の運用手順・ツールを使う。このSkillはそれらの許可を代替しない。
 
 DNSの案内は、実際のDNS管理先で変更するホスト・種別・移設先IPを示す。設定済みなら変更を求めず、MX/TXT等を維持する。設置先のSSL・HTTP/www転送と記事公開を別途確認する。
