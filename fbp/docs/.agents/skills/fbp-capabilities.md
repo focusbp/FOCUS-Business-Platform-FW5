@@ -53,7 +53,7 @@
 | ワンタイムログインとアプリ独自アクセス制御の連携 | 条件付き／対応配置で本番検証済み | 共通認証が前提。アクセスガードがsupports_onetimecode_login()で厳密なtrueを宣言し、authorize()と既存権限・停止判定の適用を検証する。未宣言・独自認証・二段階認証／セッションガードは拒否。管理アプリ起点ログインには許可を転用しない。対応frameworkとアプリの配置が必要 | fbp-passkey、app-fwtest tests/passkey/onetimecode-access-guard.php・onetimecode-saito-guard.php |
 | Square決済・店舗OAuth・サービス会員管理 | 条件付き | 契約・設定・対象店舗・決済実行許可が必要 | fbp-square-payment、fbp-square-oauth、fbp-service-user-management |
 | 管理認証・パスキー・DSP | 条件付き | 標準仕様と既存認可を確認。ローカルの正規data_* CLIはアプリDSPの保守例外（固定資格情報DSP・HTTP・アプリ実行検証は維持）。共通コード変更は別保守 | fbp-passkey、fbp-dsp |
-| 管理アプリ起点のマスターログイン | テスト検証済み／対応配置で本番有効化済み | 管理アプリの通常ログイン済みマスターが、既存HTTPS/HMAC＋短期許可照会＋60秒単回券で共通認証先へログイン。最長30分・鍵管理は再認証。受信先別設定必須。共通版は独自認証を拒否。FOCUS2はアプリ専用受信処理をテスト検証・指定16本番環境で有効化済み（app-focus2 tests/managed-login参照）。新しい署名鍵は不要。新規作成の設定工程を追加（managed_login_setup.py、必要なサーバー権限取得後に反映・HTTPS確認。新規2件の本番補完済み、本人パスキーによる実操作は未確認） | [実装・設計](../../managed-master-login-design.md)、fbp-passkey、app-fwtest tests/managed-login |
+| 管理アプリ起点のマスターログイン | テスト検証済み／対応配置で本番有効化済み | 管理アプリの通常ログイン済みマスターが、既存HTTPS/HMAC＋短期許可照会＋60秒単回券で共通認証先へログイン。最長30分・鍵管理は再認証。受信先別設定必須。共通版は独自認証を拒否。アクセス制御だけのガードは既存の明示宣言・authorizeと専用設定integrated_access_guard=trueの両方を条件に個別連携可（管理委譲38項目・app-saito権限41項目検証）。FOCUS2はアプリ専用受信処理をテスト検証・指定16本番環境で有効化済み（app-focus2 tests/managed-login参照）。新しい署名鍵は不要。新規作成の設定工程を追加（managed_login_setup.py、必要なサーバー権限取得後に反映・HTTPS確認。新規2件の本番補完済み、本人パスキーによる実操作は未確認） | [実装・設計](../../managed-master-login-design.md)、fbp-passkey、app-fwtest tests/managed-login |
 | WordPress／HTMLサイト移行 | 条件付き | 合意した取得範囲・編集方式・公開切替許可を守る | fbp-website-migration |
 | 継続業務としての外部サイト疑似操作 | 条件付き | 顧客を含む人間の依頼・了承と通常の変更／リリース許可に従う。対象・操作・方式・範囲を確認し、外部アクセスだけを理由に開発者確認を要求しない。認証・権限・利用条件は維持 | local-auto-task |
 | 単発の外部サイト調査・操作 | 条件付き | 人間が指定した対象・操作の範囲だけ。閲覧依頼から更新許可を推測しない | local-auto-task |

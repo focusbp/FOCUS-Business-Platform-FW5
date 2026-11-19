@@ -5,8 +5,15 @@ final class ManagedMasterLoginService {
     const TTL=60;const SESSION_TTL=1800;
     private static ?array $grant=null;
     private $tickets;private PasskeyRepository $repo;private array $cfg;
+    /** Deployment explicitly opts access-only guards into this delegation route. */
+    static function requireSupportedLogin(Controller $ctl): void {
+        OnetimecodeService::requireStandardLogin($ctl,true);
+        if(is_file($ctl->dirs->appdir_user.'/app_management_access_guard/app_management_access_guard.php')
+            &&(ManagedLoginConfig::load($ctl)['integrated_access_guard']??false)!==true)
+            throw new RuntimeException('Application access guard requires managed master integration.');
+    }
     function __construct(private Controller $ctl,private $transport=null){
-        OnetimecodeService::requireStandardLogin($ctl);$this->cfg=ManagedLoginConfig::load($ctl);
+        self::requireSupportedLogin($ctl);$this->cfg=ManagedLoginConfig::load($ctl);
         $this->repo=new PasskeyRepository($ctl);$this->tickets=$ctl->db('master_ticket','login');$this->tickets->set_strict_field_length(true);
     }
     static function code(mixed $value): string {if(!is_string($value)||!preg_match('/^[A-Za-z0-9_-]{43}$/D',$value))throw new RuntimeException('Invalid capability.');return $value;}

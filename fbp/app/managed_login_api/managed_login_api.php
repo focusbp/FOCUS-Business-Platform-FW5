@@ -4,7 +4,7 @@ class managed_login_api {
     function __construct(Controller $ctl){$ctl->set_check_login(false);}
     function capability(Controller $ctl): void {
         header('Cache-Control: no-store');header('Content-Type: application/json');$ctl->stop_res=true;
-        try{ManagedLoginConfig::load($ctl);OnetimecodeService::requireStandardLogin($ctl);echo json_encode(['ok'=>true,'managed_master'=>1]);}catch(Throwable $e){echo json_encode(['ok'=>true,'managed_master'=>0]);}
+        try{ManagedLoginConfig::load($ctl);ManagedMasterLoginService::requireSupportedLogin($ctl);echo json_encode(['ok'=>true,'managed_master'=>1]);}catch(Throwable $e){echo json_encode(['ok'=>true,'managed_master'=>0]);}
     }
     function prepare(Controller $ctl): void {
         header('Cache-Control: no-store');header('Content-Type: application/json');$ctl->stop_res=true;

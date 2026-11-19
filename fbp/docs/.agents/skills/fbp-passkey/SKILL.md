@@ -79,3 +79,5 @@ FFMは複数DBの一括ロールバックを提供しない。失効を先に行
 実配置の設定がない場合は無効。本番配布済みとは扱わない。管理アプリ側は通常ログインしたマスターのみ発行でき、一時認証からの再委譲は禁止。AI確認用onetimecodeとは別経路として維持する。
 
 実装・設定と境界条件は[管理アプリ起点ログイン](../../../managed-master-login-design.md)、検証はapp-fwtestのtests/managed-loginを参照する。URLやログへ券を出さず、固定の許可・券領域を通常DB APIから開放しない。
+
+アクセス制御だけのapp_management_access_guardは、supports_onetimecode_login()が厳密なtrueかつauthorize()を備え、管理委譲後も既存権限が維持される検証を行った配置に限り、専用配備設定integrated_access_guard=trueでマスターログインへ明示的に連携できる。設定なし・falseは拒否する。独自login/user/passkey/password_reset、追加認証・セッションガードの拒否、発行元の通常マスター認証、再委譲禁止は維持する。
