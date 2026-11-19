@@ -588,7 +588,7 @@ try{
 				exit;
 			}
 		}
-		if(!$ctl->display_flg){
+		if(!$ctl->display_flg && !$ctl->stop_res){
 			$ctl->res();
 		}
 	}
