@@ -65,7 +65,7 @@
 
 動画の非対応返信は「申し訳ありませんが、動画の解析（音声の文字起こしを含む）および動画の生成には現在対応していません。」。事前チェックはAUTO_ACTION: replyとQUESTION_RESULT: answeredを出力し、実行承認・TASK_SETTINGS・IMAGE_PROCESSING_REVIEWへ回さない。ツール導入や外部API利用を約束しない。他の非対応は該当する理由を具体的に伝え、必要な場合だけ実現可能な代案を示す。
 
-persistent_jobのブラウザー調査中は、ジョブ内tmpのChromium Singletonメタデータに限定してリンクを許容し、監視・保存の検査を継続する。任意リンク・プロファイルディレクトリのリンク・ジョブ外Socketは拒否する。個別失敗は次候補へ継続し、unknownは再送せず保留し、未解決のまま完了・削除しない。報告はMarkdown表の今回／トータル×🔵成功／🔴失敗で、今回の基準は最後に送信成功した報告。根拠：scripts/docs/persistent-job-chromium-locks.md、scripts/docs/persistent-job-report-table.md、tests/test_persistent_job.py（2026-11-20）。
+persistent_jobのブラウザー調査中は、ジョブ内tmpのChromium Singletonメタデータに限定してリンクを許容し、監視・保存の検査を継続する。任意リンク・プロファイルディレクトリのリンク・ジョブ外Socketは拒否する。個別失敗は次候補へ継続し、unknownは再送せず保留し、未解決のまま完了・削除しない。報告はMarkdown表の4列「🔵保存成功／🔴失敗／残件／要確認」に累計を1行で表示する。根拠：scripts/docs/persistent-job-chromium-locks.md、scripts/docs/persistent-job-report-table.md、tests/test_persistent_job.py（2026-11-20）。
 
 ## 更新ルール
 
