@@ -26,6 +26,13 @@ description: Build and operate public_pages with login-free entry points, secure
 9. 公開検索や絞り込みで URL に出したくない値は、`GET` ではなく `POST -> session` で保持し、表示時に復元する。
 10. 公開側で `ajax-auto` によるスクロール追加を行う場合、初回表示関数と追加読込関数を分ける。初回は `show_public_pages()` で全体表示し、追加読込は一覧部分専用の関数から `reload_area()` で部分テンプレートだけを返す。
 
+## public member context
+- LINE・Webhook等から会員向け公開URLを発行する場合、入口用の暗号化識別子だけを公開パラメータとして渡し、平文の会員IDをURLやhiddenに置かない。
+- 初回の公開入口で識別子を復号・会員確認し、以後の会員解決に使う値を `public_pages` のsessionへ保存する。内部フォームや戻りリンクでは、暗号化済みの識別子も再送しない。
+- 各表示・保存関数ではsessionから会員を解決し、必要な閲覧・更新権限を確認する。`続けて入力する` などの戻りURLには状態維持用パラメータを付けない。
+- 通常リンク・通常formは `appcon()` を通らないため、会員文脈が必要な内部操作は `ajax-link` / `invoke-function` / `appcon()` を使う。通常遷移を使う条件は `constraints` に従う。
+- LINE起点の具体例は [LINE起点の公開フォーム](references/line_webhook_public_form_sample.md) を参照する。
+
 ## 公開ページ台帳への登録（必須）
 - 公開ページを新規作成したら、完了までに `public_pages_registry` へ必ず登録する。変更時は `function_name` で既存登録を確認し、同じ入口を重複登録せず更新する。保存・追加読込・callbackなど、直接開くページではない内部関数は登録対象外。
 - 固定fmtの `$ctl->db("public_pages_registry", "public_pages_registry")` を使う（CLIの `data_*` は `table=public_pages_registry`）。最低限 `function_name`、`title`、`enabled=1`、`sort`、`updated_at` と以下の管理リンク設定を登録し、読戻しで確認する。ローカルではテスト環境のCLIを使い、本番反映は通常のリリース手順に従う。
@@ -95,6 +102,8 @@ description: Build and operate public_pages with login-free entry points, secure
 ```
 
 ## public form design and validation
+- FBP Ajaxを使うフォームは `function.js` 読み込みを前提に、`<form onsubmit="return false;">` と `ajax-link` + `data-form` で送信する。
+- 検証エラーは `res_error_message()` で返し、全項目のエラー収集後は保存せず `return` する。エラー時にダイアログやフォーム全体を再描画しない。
 - 新規の公開フォームで別のデザイン指定がなければ、[公開フォームのデザイン・エラー表示](references/public_form_design.md)を基準にする。既存ブランドや個別指定があればそれを優先する。
 - 項目コメントはタイトル直下・入力欄の上へ置き、入力欄との余白は6pxを基準にする。DB項目では `parameter_description` と標準helperを使う。
 - 入力検証では全項目のエラーを収集してから返す。各項目直下に対応する `.error_<name>` を置き、ボタン直上の `.error_form` に「エラーがあります。修正してください。」を表示する。最初のエラーだけで終了せず、入力値を保持する。
@@ -126,6 +135,8 @@ description: Build and operate public_pages with login-free entry points, secure
 
 
 ## public CRUD dialogs
+- 入力導線の主画面は `show_public_pages()` とし、途中確認・補助入力は `show_multi_dialog()` で表示してよい。
+- ダイアログの保存成功後、主画面へ戻すだけなら `close_multi_dialog()` を使う。完了画面へ全体を切り替える場合は `show_public_pages()` を使い、`reload_area()` は一覧などの部分更新に使う。
 - 公開側の一覧・ポータル・アプリ型UIで、追加・編集・削除のCRUD操作を置く場合は、ページ遷移ではなくダイアログを基本にする。
 - 追加は一覧上部ボタンから入力ダイアログ、編集は行ボタンから編集ダイアログ、削除は行ボタンから確認ダイアログを開く。保存・削除後は一覧へ戻し、一覧部分を再表示する。
 - 公開側の確認操作にブラウザ標準の `confirm()` / `window.confirm()` は使わない。削除・送信前確認・重要操作の確認は、FBP標準の `show_multi_dialog()` + `ajax-link` + `data-form` で確認ダイアログとして実装する。
