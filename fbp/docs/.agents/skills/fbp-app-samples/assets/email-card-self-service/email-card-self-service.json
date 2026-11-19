@@ -1,0 +1,173 @@
+{
+  "version": 1,
+  "sample": "email-card-self-service",
+  "files": [
+    "classes/app/sample_email_card/Payment.php",
+    "classes/app/sample_email_card/Profile.php",
+    "classes/app/sample_email_card/Verification.php",
+    "classes/app/sample_email_card/fmt/rate.fmt",
+    "classes/app/sample_email_card/sample_email_card.php",
+    "classes/app/sample_email_card_member_visibility_filter/sample_email_card_member_visibility_filter.php",
+    "classes/app/sample_email_card_public/Templates/content.tpl",
+    "classes/app/sample_email_card_public/Templates/email.tpl",
+    "classes/app/sample_email_card_public/Templates/head.tpl",
+    "classes/app/sample_email_card_public/Templates/page.tpl",
+    "classes/app/sample_email_card_public/Templates/verify.tpl",
+    "classes/app/sample_email_card_public/sample_email_card_public.php",
+    "classes/app/sample_email_card_url/Templates/share_url.tpl",
+    "classes/app/sample_email_card_url/sample_email_card_url.php"
+  ],
+  "options": {
+    "sample_email_card_status": [
+      {
+        "key": "0",
+        "value": "停止",
+        "color": "#64748b"
+      },
+      {
+        "key": "1",
+        "value": "有効",
+        "color": "#4BA3FF"
+      }
+    ]
+  },
+  "notes": [
+    {
+      "table": {
+        "tb_name": "sample_email_card_member",
+        "menu_name": "メール・カード管理",
+        "show_menu": 1,
+        "menu_visibility": 0,
+        "screen_build_type": 0,
+        "list_type": 0,
+        "list_width": 1000,
+        "edit_width": 800,
+        "sortkey": "id",
+        "sort_order": 3,
+        "cascade_delete_flag": 0
+      },
+      "fields": [
+        {
+          "parameter_name": "name",
+          "parameter_title": "氏名",
+          "type": "text",
+          "length": 255,
+          "validation": 1
+        },
+        {
+          "parameter_name": "email",
+          "parameter_title": "メールアドレス",
+          "type": "text",
+          "length": 254,
+          "validation": 0,
+          "format_check": "email"
+        },
+        {
+          "parameter_name": "billing_description",
+          "parameter_title": "請求内容",
+          "type": "text",
+          "length": 1000,
+          "validation": 0
+        },
+        {
+          "parameter_name": "monthly_fee",
+          "parameter_title": "月額料金",
+          "type": "number",
+          "length": 24,
+          "validation": 0
+        },
+        {
+          "parameter_name": "status",
+          "parameter_title": "状態",
+          "type": "dropdown",
+          "length": 1,
+          "validation": 1,
+          "default_value": "1",
+          "constant_array_name": "sample_email_card_status"
+        },
+        {
+          "parameter_name": "square_customer",
+          "parameter_title": "Square customer ID",
+          "type": "text",
+          "length": 255,
+          "validation": 0
+        },
+        {
+          "parameter_name": "square_card",
+          "parameter_title": "Square card ID",
+          "type": "text",
+          "length": 255,
+          "validation": 0
+        },
+        {
+          "parameter_name": "card_registered_at",
+          "parameter_title": "初回カード登録日時",
+          "type": "datetime",
+          "length": 24,
+          "validation": 0
+        }
+      ],
+      "screens": {
+        "list": [
+          "name",
+          "email",
+          "billing_description",
+          "monthly_fee",
+          "status"
+        ],
+        "add": [
+          "name",
+          "email",
+          "billing_description",
+          "monthly_fee",
+          "status"
+        ],
+        "edit": [
+          "name",
+          "email",
+          "billing_description",
+          "monthly_fee",
+          "status"
+        ],
+        "delete": [
+          "name",
+          "email"
+        ],
+        "search": [
+          "name",
+          "email"
+        ]
+      },
+      "buttons": [
+        {
+          "button_title": "メール・カード変更URL",
+          "class_name": "sample_email_card_url",
+          "function_name": "run",
+          "place": 1
+        }
+      ]
+    }
+  ],
+  "emails": [
+    {
+      "key": "sample_email_card_code",
+      "template_name": "メール・カード設定の確認コード",
+      "subject": "メールアドレスの確認",
+      "body": "確認コード：{$confirmation_code}\n\n10分以内に画面へ入力してください。\n心当たりがない場合は破棄してください。"
+    }
+  ],
+  "public_entry": {
+    "class": "sample_email_card_public",
+    "function": "page",
+    "requires_params": [
+      "token"
+    ]
+  },
+  "defaults": {
+    "width": 640,
+    "link_days": 30,
+    "code_seconds": 600,
+    "max_attempts": 5,
+    "initial_payment": "disabled; connect Payment.php only when requested"
+  }
+}

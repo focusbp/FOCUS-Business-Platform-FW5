@@ -58,6 +58,18 @@ function email_confirm_send_code(Controller $ctl) {
 		return;
 	}
 
+	$pending = $this->email_confirm_pending($ctl, $id);
+	if (($pending["email"] ?? "") === $email
+		&& !empty($pending["code_hash"])
+		&& (int) ($pending["expires_at"] ?? 0) >= time()
+		&& (int) ($pending["attempts"] ?? 0) < 5) {
+		// Duplicate send: keep the delivered code, expiry and attempt count.
+		$row["pending_email"] = $email;
+		$ctl->assign("row", $row);
+		$ctl->show_multi_dialog("YOUR_DIALOG_NAME_email_confirm", "email_confirm_verify.tpl", "メールアドレス登録", 560);
+		return;
+	}
+
 	$code = str_pad((string) random_int(0, 9999), 4, "0", STR_PAD_LEFT);
 	try {
 		$ctl->send_mail_text($email, "メールアドレス確認コード", $this->email_confirm_body($code), null, true);

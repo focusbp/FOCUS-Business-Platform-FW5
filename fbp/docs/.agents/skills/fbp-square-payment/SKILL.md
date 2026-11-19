@@ -18,6 +18,10 @@ description: Implement Square Payment flows in FBP using show_square_dialog and 
 4. 例外時は `show_square_dialog()` を再表示し、エラーメッセージを返す。
 5. `db_additionals_add` で `code_type:[5]` を設定し、対象テーブルにボタン導線を追加する。
 
+## 確認済みメールとカード変更
+
+管理URLからメールを確認し、カードを登録／差し替える一式は[公開メール確認・カード変更サンプル](../fbp-app-samples/references/email-card-self-service.md)を適応する。カード差替えに決済を自動追加しない。初回満額決済を依頼された場合だけ、サンプルのPaymentアダプターを導入先の永続予約・冪等性・結果照合へ接続する。初回課金はサンプル既定で無効。
+
 ## public_pages cart pattern
 - 公開カート導線では、Square callback 関数の先頭で `require_public_line_member()` を使わない。公開エラーページへ流れてダイアログ上のエラーが見えなくなる。
 - callback 側はまず `get_square_callback_parameter_array() ?? []` を取り、その後 `sync_public_line_member()` など session 直参照ベースで公開会員文脈を復元する。

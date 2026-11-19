@@ -25,6 +25,12 @@ Use this skill when adding or repairing an FBP dialog flow that registers or cha
 - Keep pending code expiry short, normally 10 minutes, and cap wrong-code attempts.
 - Do not add environment-specific mail settings, URLs, credentials, or local paths to docs or samples.
 
+## 公開メール・カード設定の組合せ
+
+管理URLからの本人確認、メール未登録時の初回確認、メール変更とSquareカード差替えを一式で実装する場合は、[email-card-self-serviceサンプル](../fbp-app-samples/references/email-card-self-service.md)を使う。単体ダイアログだけの修正に全体サンプルを導入しない。
+
+有効な確認情報がある同じ宛先への重複送信はサーバーで再利用し、有効期限・誤入力回数を維持する。再送の入力不備・制限・送信失敗で既存コードを先に削除しない。送信と照合を別HTTP要求で確認する。
+
 ## Sample Assets
 
 Copy and adapt the files in `assets/email-confirm-dialog/`:

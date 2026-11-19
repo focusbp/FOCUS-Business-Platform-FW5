@@ -26,6 +26,10 @@ description: Build and operate public_pages with login-free entry points, secure
 9. 公開検索や絞り込みで URL に出したくない値は、`GET` ではなく `POST -> session` で保持し、表示時に復元する。
 10. 公開側で `ajax-auto` によるスクロール追加を行う場合、初回表示関数と追加読込関数を分ける。初回は `show_public_pages()` で全体表示し、追加読込は一覧部分専用の関数から `reload_area()` で部分テンプレートだけを返す。
 
+## 公開メール・カード設定
+
+専用URLからのメール本人確認・初回メール登録・メール変更・Squareカード変更は、[email-card-self-service](../fbp-app-samples/references/email-card-self-service.md)のコード・標準フォーム・簡易デザインを利用できる。既存会員認証があればそれを優先し、カード変更と初回課金を別の業務条件として扱う。
+
 ## public member context
 - LINE・Webhook等から会員向け公開URLを発行する場合、入口用の暗号化識別子だけを公開パラメータとして渡し、平文の会員IDをURLやhiddenに置かない。
 - 初回の公開入口で識別子を復号・会員確認し、以後の会員解決に使う値を `public_pages` のsessionへ保存する。内部フォームや戻りリンクでは、暗号化済みの識別子も再送しない。
