@@ -49,7 +49,7 @@
 | .datバックアップ・比較のローカル実行 | ローカルツール | 共通のスナップショット形式・機密性方針に従い、対象解決・SVN除外・各スクリプト操作をローカル側で扱う | fbp-dat-backup、local-dat-backup |
 | FFMログ復旧のローカル実行 | ローカルツール | 共通の復旧モード・競合検査に従い、アプリとtest/productionを明示したクライアントで実行する | fbp-ffm-recovery、local-ffm-recovery |
 | ローカルPlaywrightによる管理画面確認 | 条件付き | 管理画面ログインはAPI発行ワンタイムコードのみ。未対応・発行失敗では固定パスワード等へ切り替えず未検証範囲を報告。テストゲートウェイのHTTP Basic認証は別レイヤー | local-playwright、fbp-passkey |
-| ワンタイムログインとアプリ独自アクセス制御の連携 | 条件付き／テスト検証済み | 共通認証が前提。アクセスガードがsupports_onetimecode_login()で厳密なtrueを宣言し、authorize()と既存権限・停止判定の適用を検証する。未宣言・独自認証・二段階認証／セッションガードは拒否。管理アプリ起点ログインには許可を転用しない。対応frameworkとアプリの配置が必要 | fbp-passkey、app-fwtest tests/passkey/onetimecode-access-guard.php・onetimecode-saito-guard.php |
+| ワンタイムログインとアプリ独自アクセス制御の連携 | 条件付き／対応配置で本番検証済み | 共通認証が前提。アクセスガードがsupports_onetimecode_login()で厳密なtrueを宣言し、authorize()と既存権限・停止判定の適用を検証する。未宣言・独自認証・二段階認証／セッションガードは拒否。管理アプリ起点ログインには許可を転用しない。対応frameworkとアプリの配置が必要 | fbp-passkey、app-fwtest tests/passkey/onetimecode-access-guard.php・onetimecode-saito-guard.php |
 | Square決済・店舗OAuth・サービス会員管理 | 条件付き | 契約・設定・対象店舗・決済実行許可が必要 | fbp-square-payment、fbp-square-oauth、fbp-service-user-management |
 | 管理認証・パスキー・DSP | 条件付き | 標準仕様と既存認可を確認。ローカルの正規data_* CLIはアプリDSPの保守例外（固定資格情報DSP・HTTP・アプリ実行検証は維持）。共通コード変更は別保守 | fbp-passkey、fbp-dsp |
 | 管理アプリ起点のマスターログイン | テスト検証済み／対応配置で本番有効化済み | 管理アプリの通常ログイン済みマスターが、既存HTTPS/HMAC＋短期許可照会＋60秒単回券で共通認証先へログイン。最長30分・鍵管理は再認証。受信先別設定必須。共通版は独自認証を拒否。FOCUS2はアプリ専用受信処理をテスト検証・指定16本番環境で有効化済み（app-focus2 tests/managed-login参照）。新しい署名鍵は不要。新規作成の設定工程を追加（managed_login_setup.py、必要なサーバー権限取得後に反映・HTTPS確認。新規2件の本番補完済み、本人パスキーによる実操作は未確認） | [実装・設計](../../managed-master-login-design.md)、fbp-passkey、app-fwtest tests/managed-login |
