@@ -21,7 +21,7 @@
 
 | 機能・依頼 | 区分 | 範囲・条件／非対応との境界 | 根拠Skill |
 | --- | --- | --- | --- |
-| 管理サーバーの独自ドメイン・HTTPS・www転送 | 条件付き／ローカル運用 | configure_fbp_domain.pyが暗号文を管理APIから取得し、サーバー内復号・専用pipeによるsudo認証で固定ヘルパーを実行。パスワード不要sudoは使用しない。Taskの本番変更許可・人間の依頼・claim版・DNS一致・台帳競合を確認。未管理conf・未配置/版不一致・認証失敗は開発者対応。DNS変更やサイト移行全体の完了は含まない | local-fbp-domain、local-server-root-password、scripts/docs/domain-password-automation.md |
+| 管理サーバーの独自ドメイン・HTTPS・www転送 | 条件付き／ローカル運用 | sftp_apiで既存設定確認→設定済みなら新規追加エラー→configure_fbp_domain.py --prepareでDNSを待たずApache設定→verify_fbp_domain.pyでVirtualHostとIP固定HTTPをDNS変更前に確認→顧客へDNS変更依頼。--applyでの証明書・HTTPS有効化だけはDNS一致が必要。暗号文のサーバー内復号・専用pipeによるsudo認証と固定ヘルパーを使用し、Taskの本番変更許可・依頼版を確認。DNS変更やサイト移行全体の完了は含まない | local-fbp-domain、local-server-root-password、scripts/docs/domain-password-automation.md |
 | 公開・独自管理画面のフォーム基本形 | 標準対応／追加開発 | standard-formサンプルで親フォーム・標準部品・エラー・右寄せ操作を一組で再利用。認証・CSRF・業務検証は各入口で実装。Standard Screenの自動CRUDは置換しない | fbp-app-samples、fbp-public-pages、fbp-original-screen、fbp-dialog |
 | DB・ノート・CRUD・検索・一覧 | 標準対応／追加開発 | 新規CRUDはStandard Screenを基本とする。排他はfixed_file_manager。リリース対象設定はテスト変更→リリースで反映 | fbp-db、fbp-standard-screen |
 | 標準画面の設定チェック | ローカルツール | standard_screen_check.shがノート設定・画面別項目順・固定選択肢・エラー／警告を返す。正常終了時はrequired_customer_messageでノート名入りの顧客提示必須のメニュー案内を返す。標準設定のみの作成・変更は依頼との照合で完了し、追加CLI・CRUD・Playwright・撮影は不要。独自処理・表示不具合・明示された操作確認は別。旧CLIコマンドは廃止 | fbp-standard-screen、fbp-cli、scripts/docs/standard-screen-check.md |
