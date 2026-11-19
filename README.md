@@ -2,6 +2,21 @@
 
 ## Make Samples
 
+### 画像の赤字編集
+
+```text
+再利用可能な FBP Codex Booster Make Sample「image-annotation」を作成・更新してください。
+参照: 画像の赤字編集。fbp/docs/.agents/skills/fbp-app-samples/references/image-annotation.mdを入口にする。
+画像左の縦アイコン、同梱SVG／CSS、矢印・赤枠・文字、画像上での文字編集、移動、
+選択中だけの確認なし削除、undo、確認なしクローズ、PC／狭幅表示を一組で維持する。
+元画像Blob・赤字付きPNG Blob・注釈JSONを取得してcallbackへ渡す入口までに限定し、
+案件・3D・AI・保存先・名称・DB等のアプリ固有処理と実行時依存は除く。
+assets、manifest、導入reference、既存クラス用installer、Skill導線とこのプロンプトを整合させる。
+仮配置・上書き拒否、JSON／PHP／JS、実FBPで編集→結果取得／multipart受信、
+元画像保持・JSON再読込・PNG・複数インスタンス・失敗時保持・狭幅を確認する。
+本番配布や外部AI送信は行わない。
+```
+
 ### 公開メール確認・カード変更
 
 ```text

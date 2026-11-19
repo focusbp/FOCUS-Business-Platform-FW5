@@ -16,6 +16,8 @@ When creating a new reusable sample from an existing app or feature, read `refer
 
 ## Samples
 
+- **画像の赤字編集** (`image-annotation`): 任意のPNG/JPEG/WebPへ縦アイコンで矢印・赤枠・文字、直接文字編集、ドラッグ移動、選択削除・undo。アイコンSVGとCSS込みで再現し、元画像Blob・合成PNG Blob・注釈JSONをcallbackへ返す。保存・AI・業務処理は各アプリで接続。[接続・形式・検証](references/image-annotation.md)、`assets/image-annotation/`、`scripts/install_image_annotation.php`（既存クラスへ配置、DB不要）。
+
 - **公開メール確認・カード変更** (`email-card-self-service`): 管理URL→既存／初回メール確認→メール変更・Squareカード登録／差替え。重複送信はサーバーで既存コードを保持し、中央640pxの簡易UIを使う。初回満額決済は依頼時だけ既存課金へ接続。[流れ・認証・課金連携](references/email-card-self-service.md)、[DB・メール](references/email-card-self-service-db.md)、`assets/email-card-self-service/`、`scripts/install_email_card_self_service.php`。
 
 - **簡易電子契約（管理画面）** (`simple-electronic-contract`): Standard Screen一覧、相手の氏名・メール→PDF1件→確認・登録、user由来の自分側情報、双方メール認証・承認、証跡ZIP。[フロー・権限・検証](references/simple-electronic-contract.md)、[DB・メール](references/simple-electronic-contract-db.md)、`assets/simple-electronic-contract/`。`scripts/install_simple_electronic_contract.php`でコード配置とテスト定義登録を分離する。実メール送信・SMTP設定・業務データ投入は自動で行わない。

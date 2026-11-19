@@ -1,0 +1,23 @@
+{
+  "name": "image-annotation",
+  "version": 1,
+  "files": {
+    "image_annotation_editor.tpl": "Templates/image_annotation_editor.tpl",
+    "image_annotation_style.tpl": "Templates/image_annotation_style.tpl",
+    "image_annotation_script.tpl": "Templates/image_annotation_script.tpl",
+    "image_annotation_icons.LICENSE.txt": "Templates/image_annotation_icons.LICENSE.txt",
+    "ImageAnnotationData.php": "ImageAnnotationData.php"
+  },
+  "entry": "FBPImageAnnotation.mount(root, {image: Blob, annotations, onSubmit})",
+  "result": ["originalImage: Blob", "annotatedImage: PNG Blob", "document: object", "json: string"],
+  "integration_hooks": ["onSubmit(result, editor)", "image-annotation:submit", "getResult()", "toFormData(result)", "destroy()"],
+  "tables": [],
+  "external_services": [],
+  "side_effects": "None until an application-supplied callback handles the result",
+  "icons": {
+    "source": "https://github.com/google/material-design-icons/tree/master/symbols/web",
+    "family": "Material Symbols Outlined, 24px",
+    "names": ["open_with", "north_east", "crop_square", "title", "undo", "delete"],
+    "license": "Apache-2.0"
+  }
+}

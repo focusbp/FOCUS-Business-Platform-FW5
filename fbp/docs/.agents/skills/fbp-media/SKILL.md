@@ -6,6 +6,8 @@ description: Implement and verify FBP file/image uploads, media delivery, and Vi
 # fbp-media
 
 ## workflow
+画像に矢印・赤枠・文字を入れるブラウザー編集UIは[画像の赤字編集テンプレート](../fbp-app-samples/references/image-annotation.md)を使う。SVGアイコンとCSS、直接文字編集・移動・選択削除・取消、元画像／合成PNG／注釈JSONを返す入口までを同梱する。認可・保存・後続処理は導入先に接続する。
+
 Vimeoへのアップロード・再生・削除は [vimeo-integration](../fbp-app-samples/references/vimeo-integration.md) と同Skillの `assets/vimeo-integration/` を使う。旧アップローダーはトークンをブラウザーへ渡すため、一般会員向け投稿へ流用しない。アプリ内保存動画は以下と `references/video.md` を使う。
 
 1. 画像・動画を「固定素材」か「実行時のアップロード・生成物」かで分類して保存先を決め、次に公開範囲を決める。公開範囲だけで保存先を決めない。
