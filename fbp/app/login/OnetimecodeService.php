@@ -11,7 +11,7 @@ final class OnetimecodeService {
     private static ?array $grant = null;
 
     public function __construct(private Controller $ctl) {
-        self::requireStandardLogin($ctl);
+        self::requireStandardLogin($ctl, true);
         $this->config = PasskeyConfig::load($ctl);
         // No further DB opens after reading identity/code/user for authentication.
         $this->repo = new PasskeyRepository($ctl);
@@ -19,15 +19,30 @@ final class OnetimecodeService {
         $this->codes->set_strict_field_length(true);
     }
 
-    public static function requireStandardLogin(Controller $ctl): void {
+    public static function requireStandardLogin(Controller $ctl, bool $allowIntegratedAccessGuard = false): void {
         foreach (['login','user','passkey','password_reset'] as $class) {
             if (realpath($ctl->dirs->get_class_dir($class)) !== realpath($ctl->dirs->appdir_fw.'/'.$class)) {
                 throw new RuntimeException('Standard authentication required.');
             }
         }
-        foreach (['login_two_factor_guard','app_management_session_guard','app_management_access_guard'] as $guard) {
+        foreach (['login_two_factor_guard','app_management_session_guard'] as $guard) {
             if (is_file($ctl->dirs->appdir_user.'/'.$guard.'/'.$guard.'.php')) {
                 throw new RuntimeException('Application authentication guard requires a dedicated integration.');
+            }
+        }
+        $accessGuardFile = $ctl->dirs->appdir_user.'/app_management_access_guard/app_management_access_guard.php';
+        if (is_file($accessGuardFile)) {
+            // Access policy still runs on every management request. Only apps that have
+            // verified that policy with code login may opt in; other login services
+            // retain their original rejection unless integrated separately.
+            if (!$allowIntegratedAccessGuard) {
+                throw new RuntimeException('Application access guard requires a dedicated integration.');
+            }
+            require_once $accessGuardFile;
+            if (!is_callable(['app_management_access_guard', 'supports_onetimecode_login'])
+                || app_management_access_guard::supports_onetimecode_login() !== true
+                || !is_callable([new app_management_access_guard(), 'authorize'])) {
+                throw new RuntimeException('Application access guard requires a dedicated integration.');
             }
         }
     }

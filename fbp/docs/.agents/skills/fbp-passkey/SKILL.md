@@ -65,7 +65,7 @@ FFMは複数DBの一括ロールバックを提供しない。失効を先に行
 
 - 共通login/user/passkey/password_reset構成では `login_api::issue_onetimecode` の認証済みPOSTで対象 `user_id` を毎回指定し、ブラウザ用コードを発行できる。ユーザー固定ではない。署名対象のクエリにuser_idとランダム32桁hexのrequest_idを含める。本文のユーザーIDを認可判断に使わない。
 - ブラウザで返却された `login_url` を開き、CSRF付きフォームへ `code` を入力する。コードは60秒・一度限り、セッションは最長30分・remember-meなし。パスキー認証とは区別し、鍵管理にはパスキー再認証が必要。
-- 固定 `login/fmt/onetimecode.fmt` とFFMを使い、DB管理への定義登録は不要。汎用DB APIではコード領域へアクセスできない。独自認証クラス・追加認証ガードは専用対応まで拒否する。既存API資格情報が指定ユーザーへのログイン権限を持つ設計なので、資格情報と発行コードをログやdocsへ保存しない。
+- 固定 `login/fmt/onetimecode.fmt` とFFMを使い、DB管理への定義登録は不要。汎用DB APIではコード領域へアクセスできない。独自認証クラス・追加認証ガードは専用対応まで拒否する。アクセス制御だけの `app_management_access_guard` は、public static `supports_onetimecode_login()` が厳密なtrueを返し、public `authorize()` を備える場合に限りワンタイムコードへ連携できる。対象ユーザーの既存権限・制限・停止判定がログイン後も適用されることを隔離データと対象画面で検証してから宣言する。宣言なし・false・例外では拒否し、二段階認証／セッションガードは宣言にかかわらず拒否する。管理アプリ起点ログインの独自ガード拒否は維持する。修正版frameworkの配置が前提であり、テスト検証だけで本番対応済みと扱わない。既存API資格情報が指定ユーザーへのログイン権限を持つ設計なので、資格情報と発行コードをログやdocsへ保存しない。
 - 設計・検証履歴は [ワンタイムコードログイン](../../../onetimecode-login.md)。検証資産は専用検証アプリのtests/passkey/onetimecode*.phpとonetimecode-browser.cjs。
 
 ## 共通版の検証資産
