@@ -46,7 +46,7 @@
 | POP／IMAP受信処理 | 条件付き | 受信実行とサーバー側削除の許可を分ける。開発パネルの受信ポート保存では1〜65535の範囲チェックを行わず、0も保存可 | fbp-receive-mail、app/setting/setting.php |
 | 定期処理・webhook・LINE連携 | 標準対応／追加開発 | 登録設定・本人との紐付け・外部送信許可が必要。cron定義はテスト変更→リリースで反映 | fbp-cron、fbp-webhook |
 | 公式外部API連携・API認証・MCP | 条件付き | 提供元の公式API・設定・認証・権限を確認。Square OAuth callbackもget_APP_URLで生成し、登録URLとauthorize／token交換の値を一致させる（手順・サンプル更新、Square実接続は未検証） | fbp-api-auth、fbp-mcp-server、fbp-square-oauth |
-| ローカル新規プロジェクト作成 | ローカルツール | 管理台帳・プロビジョニング・共用ソース配置・初期設定の正規入口を使う。共通frameworkの実装仕様とは分離 | local-new-project |
+| ローカル新規プロジェクト作成 | ローカルツール | 管理台帳・プロビジョニング・共用ソース配置・初期設定の正規入口を使う。利用者の継続許可に基づきMasterログイン設定では暗号化サーバーパスワードを自動取得し、サーバー内復号・専用pipeで認証する。途中失敗は最終設定から再開し、構築成功記録の後だけ通知する。共通frameworkの実装仕様とは分離 | local-new-project、scripts/docs/managed-login-provisioning.md、scripts/docs/registration-ready-20261119.md |
 | .datバックアップ・比較のローカル実行 | ローカルツール | 共通のスナップショット形式・機密性方針に従い、対象解決・SVN除外・各スクリプト操作をローカル側で扱う | fbp-dat-backup、local-dat-backup |
 | FFMログ復旧のローカル実行 | ローカルツール | 共通の復旧モード・競合検査に従い、アプリとtest/productionを明示したクライアントで実行する | fbp-ffm-recovery、local-ffm-recovery |
 | ローカルPlaywrightによる管理画面確認 | 条件付き | 管理画面ログインはAPI発行ワンタイムコードのみ。未対応・発行失敗では固定パスワード等へ切り替えず未検証範囲を報告。テストゲートウェイのHTTP Basic認証は別レイヤー | local-playwright、fbp-passkey |
