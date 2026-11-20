@@ -9,7 +9,7 @@ description: Migrate WordPress or HTML websites into an FBP app while preserving
 
 ## 必要な参照
 
-- 初回の顧客向けコメントでは [移行手順の共有](references/customer-flow.md) を使い、FBP本番へのコード・データ取込みと目視確認、独自ドメインの事前設定をDNS切替より先に行う流れを説明する。各工程の許可と現在地を引き継ぐ。
+- 初回の顧客向けコメントでは [承認済みの7手順](references/customer-flow.md) を提示する。TTLを最初に120秒へ変更 → 再構築 → FBP本番取込み・顧客目視確認 → 独自ドメイン事前設定 → DNS切替 → SSL設定 → 最終確認の順で進める。AIも同じ番号で作業し、工程記録を保持・再読込し、進捗コメントに「現在の手順番号・サイト表示状態・完了事項・次の作業・顧客待ち」を表示する。現在有効な許可を引き継ぎ、同じ状態の重複投稿はしない。
 - FTPなしを含む取得方式・対応範囲は [収集と移行手順](references/workflow.md)。
 - ツールを実行するときは [CLIとデータ契約](references/tools.md)。原本と移行候補を分け、欠落・除外・手作業を残す。
 - FBPへ組み込むときは [アプリとデータ取込み](references/fbp-integration.md)。対応APIではテキストのadd/editと添付の分割アップロードを使える。CRUDにはfbp-standard-screen、公開画面にはfbp-public-pages、媒体にはfbp-media、通知にはfbp-send_emailを必要な範囲で使う。
