@@ -22,6 +22,21 @@ class login {
 		$this->ffm_setting = $ctl->db("setting", "setting");
 	}
 
+    // Explicit login restart only: opening the login page retains automatic login.
+    function passkey_start(Controller $ctl) {
+        $expected = ManagementCsrf::token($ctl->dirs->datadir);
+        $provided = $ctl->POST('_passkey_start_csrf');
+        if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST' || !is_string($provided) || !hash_equals($expected, $provided)) {
+            http_response_code(403);
+            $ctl->stop_res = true;
+            echo 'ログイン画面を開き直してお試しください。';
+            return;
+        }
+        PasskeyService::clearAuth($ctl);
+        ManagementCsrf::forget($ctl->dirs->datadir);
+        $ctl->res_redirect($ctl->get_APP_URL('passkey', 'page', ['view'=>'login']));
+    }
+
 	function page(Controller $ctl) {		
 		//ログイン画面を表示
 
@@ -428,6 +443,7 @@ class login {
 	}
 
 	function login_form(Controller $ctl) {
+        $ctl->assign('passkey_start_csrf', ManagementCsrf::token($ctl->dirs->datadir));
 
 		//ユーザが登録されているか確認
 		$list = $this->ffm_user->select("type",0);
