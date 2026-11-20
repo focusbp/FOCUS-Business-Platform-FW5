@@ -1231,6 +1231,29 @@ class Controller_class implements Controller {
 		file_put_contents($upload_dir . "/$filename", $data);
 	}
 
+    /** Copy a trusted server-local file into managed storage with bounded memory.
+     * This does not register a file record or grant access to the saved content. */
+    public function save_local_file(string $source, string $filename): void {
+        if (!preg_match('/^[a-zA-Z0-9_-]+$/D', $filename) || !is_file($source) || is_link($source)) {
+            throw new InvalidArgumentException('Invalid managed file source or name.');
+        }
+        $dir = $this->dirs->datadir . '/upload';
+        if (!is_dir($dir) && !mkdir($dir, 0700, true) && !is_dir($dir)) throw new RuntimeException('Cannot create managed file directory.');
+        $tmp = tempnam($dir, 'managed-copy-');
+        if ($tmp === false) throw new RuntimeException('Cannot create managed file.');
+        try {
+            $in = fopen($source, 'rb'); $out = fopen($tmp, 'wb');
+            if (!$in || !$out) {
+                if (is_resource($in)) fclose($in);
+                if (is_resource($out)) fclose($out);
+                throw new RuntimeException('Cannot open managed file streams.');
+            }
+            try { $written = stream_copy_to_stream($in, $out); }
+            finally { fclose($in); fclose($out); }
+            if ($written !== filesize($source) || !rename($tmp, $dir . '/' . $filename)) throw new RuntimeException('Cannot save complete managed file.');
+        } finally { if (is_file($tmp)) unlink($tmp); }
+    }
+
 	function read_file($filename) {
 		$upload_dir = $this->dirs->datadir . "/upload";
 		//アップロード用のディレクトリ

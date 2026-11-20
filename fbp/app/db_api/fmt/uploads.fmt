@@ -1,0 +1,8 @@
+id,24,N
+upload_id,64,T
+owner,64,T
+request_id,128,T
+state,24,T
+created_at,24,N
+updated_at,24,N
+data_json,60000,T

@@ -15,6 +15,9 @@ interface ctl_files {
 	 * @return void
 	 */
 	public function save_file($filename, $data);
+
+    /** Stream a trusted local file to managed storage; does not create a DB attachment. */
+    public function save_local_file(string $source, string $filename): void;
 	
 	public function read_file($filename);
 

@@ -2,6 +2,39 @@
 
 class db_api {
 
+    function upload_begin(Controller $ctl) { $this->upload_request($ctl, 'begin'); }
+    function upload_chunk(Controller $ctl) { $this->upload_request($ctl, 'chunk'); }
+    function upload_status(Controller $ctl) { $this->upload_request($ctl, 'status'); }
+    function upload_commit(Controller $ctl) { $this->upload_request($ctl, 'commit'); }
+    function upload_abort(Controller $ctl) { $this->upload_request($ctl, 'abort'); }
+    function upload_cleanup(Controller $ctl) { $this->upload_request($ctl, 'cleanup'); }
+
+    private function upload_request(Controller $ctl, string $operation): void {
+        if ($ctl->verify_api_request() !== true) exit;
+        if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') $this->respond_error(405, 'post_required', 'Upload operations require POST.');
+        require_once __DIR__ . '/../../lib/DbApiUpload.php';
+        // Existing HMAC covers the query, not the request body. Bind these new
+        // endpoints to the exact JSON bytes through a signed query digest.
+        $max = 4 * (int)ceil(DbApiUpload::CHUNK_SIZE / 3) + 4096;
+        $in = fopen('php://input', 'rb');
+        $raw = stream_get_contents($in, $max + 1); fclose($in);
+        if ($raw === false || strlen($raw) > $max) $this->respond_error(413, 'request_too_large', 'Upload JSON exceeds the request limit.');
+        $digest = $ctl->GET('body_sha256');
+        if (!is_string($digest) || !preg_match('/^[a-f0-9]{64}$/D', $digest) || !hash_equals($digest, hash('sha256', $raw))) $this->respond_error(400, 'body_hash_mismatch', 'Signed body_sha256 does not match the JSON request.');
+        try { $payload = json_decode($raw, true, 32, JSON_THROW_ON_ERROR); }
+        catch (JsonException $e) { $this->respond_error(400, 'invalid_json', 'Invalid JSON object.'); }
+        if (!is_array($payload) || !is_object(json_decode($raw))) $this->respond_error(400, 'invalid_json', 'JSON body must be an object.');
+        try {
+            $owner = hash('sha256', trim((string)($_SERVER['HTTP_X_API_KEY'] ?? '')));
+            $result = (new DbApiUpload($ctl, $owner))->handle($operation, $payload);
+        } catch (DbApiUploadException $e) {
+            $this->respond_error($e->getCode(), $e->errorCode, $e->getMessage());
+        } catch (DspException $e) {
+            $this->respond_error(403, 'access_denied', 'Attachment operation denied by database policy.');
+        }
+        $this->respond_json($result);
+    }
+
 	function __construct(Controller $ctl) {
 		$ctl->set_check_login(false);
 	}
